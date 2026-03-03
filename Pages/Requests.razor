@@ -8,6 +8,15 @@
 @using NYC311Dashboard.Services
 @using NYC311Dashboard.Services.Contracts
 
+
+<div>
+    @LayoutService.RenderSidebarButton(
+    "Refresh 311 data",
+    "pageview-btn",
+    Resources.messaging_service_refresh_requests,
+    GetNYC311RequestsData
+    )
+</div>
 @if (requests != null && requests.Count != 0)
 {
     <div class="content-block"> @* todo: remove if settled on indenting *@
@@ -17,7 +26,6 @@
 
 @code {
     private List<RequestModel> requests = new List<RequestModel>();
-    private string message = "Refresh all data for NYC 311 requests?";
 
     private int sortOrder = 0;
 
@@ -34,7 +42,7 @@
              LayoutService.RenderSidebarButton(
                  "Refresh 311 data",
                  "sidebar-btn",
-                 message,
+                 Resources.messaging_service_refresh_requests,
                  GetNYC311RequestsData
              )
          );

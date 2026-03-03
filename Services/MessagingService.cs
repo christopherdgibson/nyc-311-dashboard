@@ -1,5 +1,6 @@
 ﻿using NYC311Dashboard.Components;
 using NYC311Dashboard.Services.Contracts;
+using System;
 
 namespace NYC311Dashboard.Services
 {
@@ -15,20 +16,20 @@ namespace NYC311Dashboard.Services
         public ConfirmDialog confirmDialog { get; set; }
         public event Action? OnMessageChanged;
         public MessageType CurrentType { get; set; } = MessageType.Info;
-        public string? Message { get; set; } = "No requests loaded.";
+        public string? Message { get; set; } = Resources.messaging_service_default_message;
 
         private Func<Task>? _onConfirm;
 
         public void ShowInfo(string? message = null)
         {
-            Message = message ?? "No requests loaded";
+            Message = message ?? Resources.messaging_service_default_info;
             CurrentType = MessageType.Info;
             OnMessageChanged?.Invoke();
         }
 
         public void ShowError(string? message = null)
         {
-            Message = message ?? "Failed to get data";
+            Message = message ?? Resources.messaging_service_default_error;
             CurrentType = MessageType.Error;
             OnMessageChanged?.Invoke();
         }

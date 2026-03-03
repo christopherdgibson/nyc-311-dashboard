@@ -35,7 +35,7 @@ namespace NYC311Dashboard.Services
 
         public async Task GetNYC311RequestsDataAsync(string? url = null)
         {
-            _loadingService.LoadingMessage = "I'm loading here!";
+            _loadingService.LoadingMessage = Resources.loading_service_loading_here;
             _loadingService.IsLoading = true;
 
             try
@@ -44,7 +44,7 @@ namespace NYC311Dashboard.Services
                 var result = await LoadData<RequestModel>(url);
                 if (result.IsFailure)
                 {
-                    _messagingService.ShowError(string.Join(" ", "Failed to get data.", result.Error));
+                    _messagingService.ShowError(string.Join(" ", Resources.failed_to_get_data, result.Error));
                     _loadingService.IsLoading = false;
                     return;
                 }
@@ -52,10 +52,10 @@ namespace NYC311Dashboard.Services
                 //     requests.Clear();
                 //     sortOrder = 0;
 
-                Requests = result.Value.Where(r => r.Status.Equals("closed", StringComparison.OrdinalIgnoreCase)).ToList();
+                Requests = result.Value.Where(r => r.Status.Equals(Resources.request_status_closed, StringComparison.OrdinalIgnoreCase)).ToList();
 
                 Boroughs = Requests
-                .Where(r => !string.IsNullOrWhiteSpace(r.Borough) && !r.Borough.Equals("unspecified", StringComparison.OrdinalIgnoreCase))
+                .Where(r => !string.IsNullOrWhiteSpace(r.Borough) && !r.Borough.Equals(Resources.borough_unspecified, StringComparison.OrdinalIgnoreCase))
                 .Select(r => r.Borough.ToProperCase())
                 .Distinct()
                 .OrderBy(b => b)
@@ -68,7 +68,7 @@ namespace NYC311Dashboard.Services
             {
                 Console.WriteLine("ERROR: " + ex.Message);
                 Console.WriteLine(ex.ToString());
-                _messagingService.ShowError("An error occurred. Please try again.!");
+                _messagingService.ShowError(Resources.messaging_service_error_occurred);
             }
             finally
             {
@@ -79,7 +79,7 @@ namespace NYC311Dashboard.Services
 
         public Result GenerateTableByBoroughDay()
         {
-            _loadingService.LoadingMessage = "I'm loading here!";
+            _loadingService.LoadingMessage = Resources.loading_service_loading_here;
             _loadingService.IsLoading = true;
             try
             {
@@ -126,8 +126,8 @@ namespace NYC311Dashboard.Services
             }
             catch
             {
-                _messagingService.ShowError("An error occurred. Please try again.!");
-                return Result.Failure("An error occurred. Please try again.!");
+                _messagingService.ShowError(Resources.messaging_service_error_occurred);
+                return Result.Failure(Resources.messaging_service_error_occurred);
             }
             finally
             {
@@ -137,7 +137,7 @@ namespace NYC311Dashboard.Services
 
         public Result GenerateTableByZipHour()
         {
-            _loadingService.LoadingMessage = "I'm loading here!";
+            _loadingService.LoadingMessage = Resources.loading_service_loading_here;
             _loadingService.IsLoading = true;
 
             try
@@ -191,8 +191,8 @@ namespace NYC311Dashboard.Services
             }
             catch
             {
-                _messagingService.ShowError("An error occurred. Please try again.!");
-                return Result.Failure("An error occurred. Please try again.!");
+                _messagingService.ShowError(Resources.messaging_service_error_occurred);
+                return Result.Failure(Resources.messaging_service_error_occurred);
             }
             finally
             {

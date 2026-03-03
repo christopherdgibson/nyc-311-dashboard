@@ -34,7 +34,7 @@ namespace NYC311Dashboard.Services.Contracts
 
         Task ChangeClassName(string oldClassName, string newClassName);
 
-        Task ToggleNavbar(string element = "nav ul", string newClassName = "nav-open");
+        Task ToggleClassName(string element = "nav ul", string newClassName = "nav-open");
 
         Task CloseNavOnClick(string element = "nav ul", string newClassName = "nav-open");
     }

@@ -33,15 +33,15 @@
     private List<string> zipCodes = new();
     private HashSet<string> selectedBoroughs = new();
     private HashSet<string> selectedZipCodes = new();
-    private string label = "Select Zip Codes";
-    private string message = "Please refresh data to populate boroughs list!";
+    private string label = Resources.select_zip_codes;
+    private string message = Resources.refresh_data_boroughs_list;
 
     private bool chartNeedsRefresh = false;
     private bool ShowChart => requestsByZipHour != null && requestsByZipHour.Count != 0 && selectedZipCodes.Any();
 
     protected override void OnInitialized()
     {
-        LayoutService.SetTitle("Requests by Zip Code");
+        LayoutService.SetTitle(Resources.requests_by_zip_code);
     }
 
     protected override async Task OnInitializedAsync()
@@ -49,7 +49,7 @@
         if (RequestService.Boroughs.Count == 0) // selected boroughs check necessary for checkbox null error. Always the case?
         {
             LayoutService.SetSidebar(
-                LayoutService.RenderInactiveSidebarButton("No data available", message)
+                LayoutService.RenderInactiveSidebarButton(Resources.data_none_available, message)
         );
             return;
         }
@@ -57,7 +57,7 @@
         if (RequestService.SelectedBoroughs.Count == 0) // selected boroughs check necessary for checkbox null error. Always the case?
         {
             LayoutService.SetSidebar(
-                LayoutService.RenderInactiveSidebarButton("No data available", "No boroughs selected! Please select one or more boroughs to see zip code data.")
+                LayoutService.RenderInactiveSidebarButton(Resources.data_none_available, string.Join(" ", string.Format(Resources.empty_selction, Resources.groupy_category_boroughs), Resources.select_boroughs_zip_code_data))
         );
             return;
         }

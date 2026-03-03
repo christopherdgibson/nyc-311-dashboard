@@ -4,7 +4,8 @@
    @*  <button class="btn btn-secondary" @onclick="ToggleDropdown"> *@
     <button class="@Classes" @onclick="ToggleDropdown">
         @Label
-        <i class="bi bi-chevron-bar-expand"></i>
+  @*       <i class="bi bi-chevron-double-down"></i> *@
+        <i class="bi @(showDropdown ? "bi-chevron-up" : "bi-chevron-double-down")"></i>
     </button>
     @if (showDropdown)
     {
@@ -34,9 +35,9 @@
 </div>
 
 @code {
-    [Parameter] public string Label { get; set; } = "Select Options";
+    [Parameter] public string Label { get; set; } = Resources.label_select_options;
     [Parameter] public string Classes { get; set; } = "sidebar-btn";
-    [Parameter] public IEnumerable<TItem> Options { get; set; }
+    [Parameter] public IEnumerable<TItem>? Options { get; set; }
     [Parameter] public HashSet<TItem> SelectedValues { get; set; } = new();
     [Parameter] public EventCallback<HashSet<TItem>> SelectedValuesChanged { get; set; }
     [Parameter] public Func<Task>? OnSelectionChanged { get; set; }

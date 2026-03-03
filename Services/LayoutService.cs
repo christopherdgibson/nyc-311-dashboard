@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using NYC311Dashboard.Components;
 using NYC311Dashboard.Services.Contracts;
+using System.Runtime.Versioning;
 
 namespace NYC311Dashboard.Services
 {
@@ -68,7 +69,7 @@ namespace NYC311Dashboard.Services
             bool inactive = false,
             Func<TItem, string>? optionLabel = null)
         {
-            _loadingService.LoadingMessage = "I'm loading here!";
+            _loadingService.LoadingMessage = Resources.loading_service_loading_here;
             _loadingService.IsLoading = true;
             try
             {
@@ -90,8 +91,9 @@ namespace NYC311Dashboard.Services
             }
             catch
             {
-                _messagingService.ShowError("An error occurred. Please try again.!");
-                return CustomSidebar; // Result.Failure("An error occurred. Please try again.!");
+                _messagingService.ShowError(Resources.messaging_service_error_occurred);
+                //_messagingService.ShowError(Resources.messaging_service_error_occurred);
+                return CustomSidebar; // Result.Failure(Resources.messaging_service_error_occurred);
             }
             finally
             {
@@ -118,9 +120,9 @@ namespace NYC311Dashboard.Services
             await _js.InvokeVoidAsync("changeClassName", oldClassName, newClassName);
         }
 
-        public async Task ToggleNavbar(string element = "nav ul", string newClassName = "nav-open")
+        public async Task ToggleClassName(string element = "nav ul", string className = "nav-open")
         {
-            await _js.InvokeVoidAsync("toggleNav");
+            await _js.InvokeVoidAsync("toggleNav", element, className);
         }
 
         public async Task CloseNavOnClick(string element = "nav ul", string newClassName = "nav-open")

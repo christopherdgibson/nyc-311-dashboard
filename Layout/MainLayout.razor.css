@@ -38,24 +38,12 @@ main {
 
 /* ────────────────────────── Sidebar styles ────────────────────────── */
 
-.sidebar {
-    width: var(--sidebar-width);
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    overflow-y: auto;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-}
-
 .sidebar-header {
-    padding: 20px;
-    width: var(--sidebar-width);
-    height: var(--sidebar-width);
+    padding: 10px;
+    width: var(--header-height);
+    height: var(--header-height);
     text-align: center;
-    background-color: var(--top-gradient-color);
+    background-color: var(--theme-main-color);
     align-content: center;
     /*border-bottom: 1px solid #dee2e6;*/
 }
@@ -68,12 +56,36 @@ main {
     z-index: 12;
 }
 
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 80px;
+    left: 0; /* always anchored to left: 0 */
+    transform: translateX(calc(-1 * var(--sidebar-width))); /* hidden by default */
+    transition: transform 0.3s ease;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-open {
+    transform: translateX(0); /* slide in */
+}
+
 .sidebar-body {
     display: flex;
     flex-direction: column;
     flex: 1; /* takes remaining space below header */
-    overflow: hidden;
-    background-image: linear-gradient(180deg, var(--top-gradient-color) 0%, var(--bottom-gradient-color) 70%);
+    overflow-y: auto;
+    background-image: linear-gradient(180deg, var(--theme-main-color) 50%, var(--theme-accent-color) 80%);
+}
+
+.sidebar-body-container {
+    display: flex;
+    position: relative;
+/*    flex-direction: row;*/
+    height: 100%;
 }
 
 .sidebar-swap-container {
@@ -94,6 +106,57 @@ main {
     .scroll-to-top-btn i {
         font-size: 1.5rem;
     }
+
+
+/*.sidebar-open-btn {
+    display: flex;*/
+/*    position: fixed;
+    bottom: 20px;
+    right: 20px;*/
+    /*z-index: 10;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 40px;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    background: none;
+    border: none;
+}*/
+
+.sidebar-open-btn {
+    position: absolute;
+    right: -50px; /* protrudes outside the sidebar */
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 40px;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+    z-index: 11; /* above the sidebar */
+}
+
+
+.sidebar-open .sidebar-open-btn {
+    transform: translateY(-50%) rotate(180deg) !important;
+}
+
+.scroll-to-top-mobile-btn {
+    display: flex;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 40px;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+}
 
 /* ─── Dropdown menu styles ─── */
 .dropbtn {
@@ -138,7 +201,7 @@ main {
 /* ────────────────────────── Mobile styles ────────────────────────── */
 
 @media (max-width: 768px) {
-    .sidebar {
+    /*.sidebar {
         width: 100vw;
         height: var(--header-height);
         position: fixed;
@@ -167,7 +230,7 @@ main {
         background: none;
         padding-left: 10%;
         height: var(--header-height);
-        background-image: linear-gradient(90deg, var(--top-gradient-color) 0%, var(--bottom-gradient-color) 120%);
+        background-image: linear-gradient(90deg, var(--theme-main-color) 0%, var(--theme-accent-color) 120%);
     }
 
     .sidebar-swap-container {
@@ -182,9 +245,9 @@ main {
 
     .scroll-to-top-btn {
         display: none;
-    }
+    }*/
 
-    .scroll-to-top-mobile-btn {
+/*    .scroll-to-top-mobile-btn {
         display: flex;
         position: fixed;
         bottom: 20px;
@@ -198,14 +261,14 @@ main {
         align-items: center;
         background: none;
         border: none;
-    }
+    }*/
 
-    .nav-expand-menu {
+/*    .nav-expand-menu {
         flex: 0 0 auto;
         margin-right: 20px;
         background: none;
         border: none;
-        color: var(--top-gradient-color);
+        color: var(--theme-main-color);
     }
         .nav-expand-menu svg {
             vertical-align: unset;
@@ -217,7 +280,7 @@ main {
 
         .top-row ::deep a, .top-row ::deep .btn-link {
             margin-left: 0;
-        }
+        }*/
 }
 
 /* ────────────────────────── Desktop styles ────────────────────────── */
@@ -227,9 +290,9 @@ main {
         display: none;
     }
 
-    .scroll-to-top-mobile-btn {
+/*    .scroll-to-top-mobile-btn {
         display: none;
-    }
+    }*/
 
     .page {
         flex-direction: column;

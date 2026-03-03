@@ -123,7 +123,7 @@
         requestsByBorough = RequestService.RequestsByBoroughDate;
     }
 
-    protected TableOptions<BoroughDateTableRow> GetTableOptions()
+    protected TableOptions<BoroughDateTableRow> GetTableOptions() // todo: move this to service? Can use common base
     {
         var options = new TableOptions<BoroughDateTableRow>
         {

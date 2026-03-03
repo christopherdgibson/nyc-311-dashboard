@@ -23,15 +23,15 @@ namespace NYC311Dashboard.Services
         {
             try
             {
-                _loadingService.LoadingMessage = "I'm loading here!";
+                _loadingService.LoadingMessage = Resources.loading_service_loading_here;
                 _loadingService.IsLoading = true;
 
                 await _js.InvokeVoidAsync("saveElementAsPdf", "pdf-content", options);
             }
             catch
             {
-                _messagingService.ShowError("An error occurred. Please try again.!");
-                //return Result.Failure("An error occurred. Please try again.!");
+                _messagingService.ShowError(Resources.messaging_service_error_occurred);
+                //return Result.Failure(Resources.messaging_service_error_occurred);
             }
             finally
             {

@@ -123,7 +123,7 @@
                         {
                             <th>
                                 @prop.Name.FromCamelCaseToProperSpaced()
-                                <button class="icon-btn" @onclick="() => OnSort(prop)">
+                                <button class="menu-icon-btn" @onclick="() => OnSort(prop)">
                                     <i class="bi @(SortColumn == prop ? (SortAscending ? "bi-sort-up" : "bi-sort-down") : "bi-arrow-down-up")"></i>
                                 </button>
                             </th>

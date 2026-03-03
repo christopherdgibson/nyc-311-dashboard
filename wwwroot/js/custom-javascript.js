@@ -9,15 +9,23 @@ function changeClassName(classNameOld, classNameNew) {
     }
 }
 
-function toggleNav() {
-    document.querySelector('nav ul').classList.toggle('nav-open');
+function toggleNav(element, className) {
+    document.querySelector(element).classList.toggle(className);
 }
 
+//function closeNavOnClick() {
+//    document.querySelector('nav ul').addEventListener('click', function (e) {
+//        if (e.target.tagName === 'A') {
+//            this.classList.remove('nav-open');
+//        }
+//    });
+//}
+
 function closeNavOnClick() {
-    document.querySelector('nav ul').addEventListener('click', function (e) {
-        if (e.target.tagName === 'A') {
-            this.classList.remove('nav-open');
-        }
+    document.querySelectorAll('nav ul a').forEach(function (link) {
+        link.addEventListener('click', () => {
+            document.getElementById('checkNav').checked = false;
+    });
     });
 }
 
@@ -63,16 +71,6 @@ window.setIndeterminateSelection = (element, indeterminate) => {
         element.indeterminate = indeterminate;
     }
 };
-
-window.renderApexChart = function (seriesData, categories, width = "100%", height = "100%") {
-    var options = {
-        chart: { height: 380, width: width, type: "line" },
-        series: [{ name: "Series 1", data: seriesData }],
-        xaxis: { categories: categories }
-    };
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
-}
 
 window.renderApexChartMulti = function (elementSelector, options) {
     var options = {

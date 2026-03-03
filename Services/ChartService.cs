@@ -29,7 +29,7 @@ namespace NYC311Dashboard.Services
         {
             try
             {
-                _loadingService.LoadingMessage = "I'm loading here!";
+                _loadingService.LoadingMessage = Resources.loading_service_loading_here;
                 _loadingService.IsLoading = true;
 
                 if (options == null)
@@ -46,8 +46,8 @@ namespace NYC311Dashboard.Services
 
                     var series = new List<ApexSeries>
                     {
-                        new ApexSeries { Name = "Total Count", Data = totalCounts },
-                        new ApexSeries { Name = "Total Duration", Data = totalDurations }
+                        new ApexSeries { Name = Resources.chart_name_total_count, Data = totalCounts },
+                        new ApexSeries { Name = Resources.chart_name_total_duration, Data = totalDurations }
                     };
 
                     var result = GetChartOptions("boroughs", categories, series, height: "380");
@@ -66,7 +66,7 @@ namespace NYC311Dashboard.Services
             }
             catch
             {
-                _messagingService.ShowError("Failed to render chart. Please check your connection and try again."); //todo: dialog box with error message and retry button?
+                _messagingService.ShowError(Resources.failed_to_render_chart); //todo: dialog box with error message and retry button?
             }
             finally
             {
@@ -78,7 +78,7 @@ namespace NYC311Dashboard.Services
         {
             try
             {
-                _loadingService.LoadingMessage = "I'm loading here!";
+                _loadingService.LoadingMessage = Resources.loading_service_loading_here;
                 _loadingService.IsLoading = true;
 
                 if (options == null)
@@ -117,7 +117,7 @@ namespace NYC311Dashboard.Services
             }
             catch
             {
-                _messagingService.ShowError("Failed to render chart. Please check your connection and try again.");
+                _messagingService.ShowError(Resources.failed_to_render_chart);
             }
             finally
             {
@@ -134,7 +134,7 @@ namespace NYC311Dashboard.Services
         {
             try
             {
-                _loadingService.LoadingMessage = "I'm loading here!";
+                _loadingService.LoadingMessage = Resources.loading_service_loading_here;
                 _loadingService.IsLoading = true;
                 string type;
                 if (selection == "boroughs")
@@ -148,9 +148,9 @@ namespace NYC311Dashboard.Services
 
                 if (!categories.Any())
                 {
-                    _messagingService.ShowInfo($"No {selection} selected!");
+                    _messagingService.ShowInfo(string.Format(Resources.empty_selction, selection));
                     _loadingService.IsLoading = false;
-                    return Result.Failure<ChartOptions>("No boroughs selected!");
+                    return Result.Failure<ChartOptions>(string.Format(Resources.empty_selction, Resources.groupy_category_boroughs));
                 }
 
                 categories.Sort();
@@ -177,8 +177,8 @@ namespace NYC311Dashboard.Services
             }
             catch
             {
-                _messagingService.ShowError("Failed to get chart options.");
-                return Result.Failure<ChartOptions>("Failed to get chart options.");
+                _messagingService.ShowError(Resources.failed_chart_options);
+                return Result.Failure<ChartOptions>(Resources.failed_chart_options);
             }
             finally
             {

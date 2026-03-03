@@ -1,11 +1,21 @@
 ﻿/*app.css:*/
 
 :root {
-    --top-gradient-color: rgb(5, 39, 103);
-    --bottom-gradient-color: #f7b731;
+    --nyc-taxi-yellow-color: #f7b731;
+    --nyc-311-yellow: #fff200;
+    --nyc_flag-blue-color: #003884;
+    --nyc_flag-orange-color: #FF6600;
+    --blazor-blue: rgb(5, 39, 103);
     --btn-primary-blue: #007bff;
+    --theme-main-color: var(--nyc_flag-blue-color);
+    --theme-accent-color: var(--nyc-311-yellow);
     --sidebar-width: clamp(180px, 25vw, 250px);
     --header-height: 75px;
+    --sidebar-closed: 0;
+    --btn-pageview-text-color: var(--theme-accent-color);
+    --btn-pageview-bg-color: var(--theme-main-color);
+    --btn-sidebar-text-color: var(--theme-main-color);
+    --btn-sidebar-bg-color: var(--theme-accent-color);
     --btn-hover-color: #0056b3;
 }
 
@@ -87,7 +97,7 @@ code {
 .content {
     flex: 1 1 auto;
     padding: 2.5rem;
-    margin-left: var(--sidebar-width);
+    margin-left: var(--sidebar-closed);
     /*height: 100vh;*/
     overflow-y: visible;
     display: flex;
@@ -96,12 +106,12 @@ code {
 }
 
     .content h1, h2, h3 {
-        color: var(--top-gradient-color);
+        color: var(--theme-main-color);
         margin-bottom: 2rem;
     }
 
     .content h2, h3 {
-        color: var(--top-gradient-color);
+        color: var(--theme-main-color);
         margin-left: 2rem;
     }
 
@@ -112,7 +122,7 @@ code {
 .content-reports-page {
     flex: 1 1 auto;
     padding: 2.5rem;
-    margin-left: var(--sidebar-width);
+    margin-left: 0;
     /*height: 100vh;*/
     overflow-y: auto;
     display: flex;
@@ -122,6 +132,21 @@ code {
 
     .content-reports-page h1 {
         color: white;
+    }
+
+.pageview-btn {
+    /* color: white;*/
+    /* background-color: unset;*/
+    color: white;
+    background-color: var(--btn-pageview-bg-color);
+    border: 2px solid #333;
+    padding: 15px;
+    width: fit-content;
+}
+
+    .pageview-btn:hover {
+        color: var(--btn-pageview-bg-color);
+        background-color: var(--theme-accent-color);
     }
 
 /* ─── Charts and tables ─── */
@@ -152,27 +177,61 @@ code {
 /* ─── Shared sidebar btn styles ─── */
 
 .sidebar-btn {
-    width: 100%;
+    /* color: white;*/
+    /* background-color: unset;*/
+    color: var(--btn-sidebar-text-color);
+    background-color: var(--btn-sidebar-bg-color);
+    border: 2px solid #333;
     padding: 15px;
-    background-color: var(--btn-primary-blue);
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.5)
 }
 
-    .sidebar-btn:hover {
-        background-color: var(--btn-hover-color);
-    }
+/* ────────────────────────── Home page styles ────────────────────────── */
+
+.home-page-container {
+    width: 100%;
+    height: 50vh;
+    position: relative;
+}
+
+.nyc-home-image {
+    width: 100%;
+    height: 100%;
+    opacity: 0.4;
+    object-fit: cover; /* fills container, crops overflow */
+    object-position: center center; /* show top of image, crop bottom */
+}
+
+.home-page-title {
+    font-size: clamp(2rem, min(5vw, 5vh), 4rem);
+    color: var(--theme-main-color);
+    z-index: 10;
+    margin: 2rem;
+    width: 50%;
+    position: absolute;
+}
+
+.home-page-content {
+    font-size: clamp(1rem, min(5vw, 5vh), 2rem);
+    color: var(--theme-main-color);
+    margin: 1rem 5rem;
+}
+.home-page-info-container {
+    display: flex;
+/*    grid-template-columns: auto 1fr;*/
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.home-page-info {
+    font-size: clamp(1rem, min(5vw, 5vh), 2rem);
+    color: var(--theme-main-color);
+    z-index: 10;
+    margin-top: 1rem;
+}
 
 /* ────────────────────────── Sortable table styles ────────────────────────── */
-
 .table-responsive {
     overflow-x: auto;
     min-width: 0;
@@ -244,7 +303,7 @@ code {
     word-break: break-word;
 }
 
-/* Trim extremely long single tokens (URLs, GUIDs) */
+/* Trim extremely long single tokens */
 .truncate {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -307,7 +366,7 @@ code {
     border: none;
     padding: 0 4px;
     margin: 0;
-    color: var(--btn-primary-blue);
+    color: var(--theme-main-color);
     cursor: pointer;
     vertical-align: middle;
     float: right;
@@ -318,8 +377,28 @@ code {
     }
 
     .icon-btn:hover {
+        color: var(--theme-accent-color)
+    }
+
+.menu-icon-btn {
+    background: none;
+    border: none;
+    padding: 0 4px;
+    margin: 0;
+    color: var(--btn-primary-blue);
+    cursor: pointer;
+    vertical-align: middle;
+    float: right;
+}
+
+    .menu-icon-btn:focus {
+        outline: none;
+    }
+
+    .menu-icon-btn:hover {
         color: var(--btn-hover-color)
     }
+
 
 .expand-btn .bi-chevron-down {
     color: var(--btn-primary-blue);
@@ -349,12 +428,12 @@ code {
     position: absolute;
     left: 0;
     top: 100%;
-    min-width: 220px;
+    width:100%;
     background: white;
     border: 1px solid #ccc;
     z-index: 1000;
     padding: 10px;
-    max-height: 250px;
+    max-height: 350px;
     overflow-y: auto;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
@@ -382,6 +461,18 @@ code {
 
 /* ────────────────────────── Navbar styles ────────────────────────── */
 
+.navbar-header {
+    padding: 10px;
+    width: var(--header-height);
+/*    height: var(--header-height);*/
+    text-align: center;
+    background-color: var(--theme-main-color);
+    align-content: center;
+    display: flex;
+    align-items: center;
+    /*border-bottom: 1px solid #dee2e6;*/
+}
+
 .logo-image {
     width: 50px;
     display: inline-flex;
@@ -389,11 +480,13 @@ code {
 }
 
 nav {
-    background-image: none;
-    margin-left: var(--sidebar-width);
+    /*    margin-left: var(--sidebar-width);*/
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     min-height: 75px;
-    background-image: linear-gradient(90deg, var(--top-gradient-color) 0%, var(--bottom-gradient-color) 120%);
+    background-color: var(--theme-main-color);
+    /*background-image: linear-gradient(90deg, var(--theme-main-color) 0%, var(--theme-accent-color) 120%);*/
 }
 
         nav ul {
@@ -410,8 +503,8 @@ nav {
                 align-content: center;
             }
                 nav ul li:hover {
-                    color: var(--top-gradient-color);
-                    background-color: var(--bottom-gradient-color);
+                    color: var(--theme-main-color);
+                    background-color: var(--theme-accent-color);
                 }
 
                 nav ul li a {
@@ -428,7 +521,7 @@ nav {
                 }
 
                     nav ul li a:hover {
-                        color: var(--top-gradient-color);
+                        color: var(--theme-main-color);
                     }
 
     .dropdown-hidden {
@@ -449,7 +542,7 @@ nav {
     }
 
         .dropdown:hover a {
-            color: var(--top-gradient-color);
+            color: var(--theme-main-color);
         }
         nav .dropdown div {
             display: none;
@@ -460,11 +553,11 @@ nav {
                 text-wrap-mode: nowrap;
                 width: auto;
                 color: white;
-                background-color: var(--top-gradient-color);
+                background-color: var(--theme-main-color);
             }
 
         nav .dropdown:hover {
-            background-color: var(--bottom-gradient-color);
+            background-color: var(--theme-accent-color);
         }
 
             nav .dropdown:hover div {
@@ -473,8 +566,27 @@ nav {
             }
 
                     nav .dropdown:hover div a:hover {
-                        color: var(--top-gradient-color);
+                        color: var(--theme-main-color);
                     }
+
+/* Hamburger button */
+.checkbtn {
+    display: none;
+    color: white;
+    font-size: 30px;
+    align-items: center;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.checkbtn svg {
+    display: flex;
+    align-items: center;
+}
+
+#checkNav {
+    display: none;
+}
 
 /* ────────────────────────── Mobile styles ────────────────────────── */
 
@@ -487,9 +599,21 @@ nav {
         margin-left: 0;
     }
 
+    .checkbtn {
+        display: flex;
+        align-items: center;
+/*        order: 1;
+        margin-right: 20px;*/
+    }
+
     .sidebar-btn {
-        width: fit-content;
-        padding: 15px;
+        height: 75px;
+        border: 2px solid #333;
+    }
+
+    .sidebar-btn:hover {
+        color: var(--theme-main-color);
+        background-color: var(--theme-accent-color);
     }
 
     nav {
@@ -504,7 +628,7 @@ nav {
             position: fixed;
             top: 80px;
             right: -100%;
-            background-color: var(--top-gradient-color);
+            background-color: var(--theme-main-color);
             width: 100%;
             height: 100vh;
             display: flex;
@@ -550,6 +674,33 @@ nav {
             nav ul.nav-open li a:hover div {
                 display: none;
             }
+        #checkNav:checked ~ ul {
+            right: 0;
+            align-content: center;
+            z-index: 10;
+        }
+
+            #checkNav:checked ~ ul .menu-icon-item {
+                margin-right: -80px;
+                padding-left: 20px;
+                transition: 0.3s ease;
+            }
+
+            #checkNav:checked ~ ul li {
+                border-left: none;
+                border-right: none;
+                padding: 20px 0;
+            }
+
+                #checkNav:checked ~ ul li.has-dropdown .dropdown-label {
+                    display: block;
+                }
+
+                #checkNav:checked ~ ul li a:hover {
+                    padding-left: 10px;
+                    border-left: 2px solid #3ca0e7;
+                    transition: all 0.3s ease;
+                }
 }
 
 /* ────────────────────────── Loading styles ────────────────────────── */
@@ -616,7 +767,7 @@ nav {
 }
 
     .loading-progress-text:after {
-        content: var(--blazor-load-percentage-text, "I'm loading here!");
+        content: var(--blazor-load-percentage-text, Resources.loading_service_loading_here);
     }
 
 /* ────────────────────────── Printing styles ────────────────────────── */

@@ -21,6 +21,6 @@ namespace NYC311Dashboard.Services
             }
         }
 
-        public string LoadingMessage { get; set; } = "Loading, please wait...";
+        public string LoadingMessage { get; set; } = Resources.loading_service_default_loading;
     }
 }
