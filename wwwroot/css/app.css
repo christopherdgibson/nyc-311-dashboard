@@ -12,6 +12,7 @@
     --sidebar-width: clamp(180px, 25vw, 250px);
     --sidebar-closed: 30px;
     --header-height: 75px;
+    --content-padding-width: clamp(0.25rem, 3vw, 2.5rem);
     --btn-pageview-text-color: var(--theme-accent-color);
     --btn-pageview-bg-color: var(--theme-main-color);
     --btn-sidebar-text-color: var(--theme-main-color);
@@ -96,7 +97,7 @@ code {
 
 .content {
     flex: 1 1 auto;
-    padding: 2.5rem;
+    padding: 2.5rem var(--content-padding-width);
     margin-left: var(--sidebar-closed);
     overflow-y: visible;
     display: flex;
@@ -311,11 +312,11 @@ h1 {
 /* ────────────────────────── Home page styles ────────────────────────── */
 
 .home-page-container {
-    width: calc(100% + 5rem + var(--sidebar-closed));
+    width: calc(100% + 2 * var(--content-padding-width) + var(--sidebar-closed));
     height: 55vh;
     position: relative;
-    margin-left: calc(-2.5rem - var(--sidebar-closed));
-    margin-right: -2.5rem;
+    margin-left: calc(-1 * (var(--content-padding-width) + var(--sidebar-closed)));
+    margin-right: calc(-1 * var(--content-padding-width));
     margin-top: -2.5rem;
     overflow: hidden;
 }
@@ -482,6 +483,14 @@ h1 {
     min-width: 0;
     -webkit-overflow-scrolling: touch;
     border: 1px solid #ddd;
+    font-size: clamp(0.7rem, 2vw, 1rem);
+}
+
+@media (max-width:940px) {
+    /* Delay wrapping to one column */
+    .table-responsive {
+        font-size: 0.7rem;
+    }
 }
 
 /* Make the table wider than the wrapper when column sum exceeds viewport */
