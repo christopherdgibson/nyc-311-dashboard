@@ -164,8 +164,14 @@
 	<data name="request_status_closed" xml:space="preserve">
 		<value>closed</value>
 	</data>
-	<data name="requests_by_zip_code" xml:space="preserve">
-		<value>Requests by Zip Code</value>
+	<data name="title_requests" xml:space="preserve">
+		<value>Requests by</value>
+	</data>
+	<data name="title_borough" xml:space="preserve">
+		<value>Borough</value>
+	</data>
+	<data name="title_zip_code" xml:space="preserve">
+		<value>Zip Code</value>
 	</data>
 	<data name="select_boroughs_zip_code_data" xml:space="preserve">
 		<value>Please select one or more boroughs to see zip code data.</value>

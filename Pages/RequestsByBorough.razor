@@ -16,10 +16,10 @@
 @if (ShowChart)
 {
     <div class="content-block">
-        <h2>Chart: Total requests and duration for selected boroughs</h2>
+        <h2>Total requests and duration for selected boroughs</h2>
         <div id="chart" class="apex-chart-flex-container pageview-block"></div>
-
-        <h2>Table: Total requests by date for selected boroughs</h2>
+        <hr class="section-divider" />
+        <h2>Total requests by date for selected boroughs</h2>
         <div class="table-flex-container pageview-block">
             <SortableTable Items="requestsByBorough" Options=@GetTableOptions() />
         </div>
@@ -42,7 +42,7 @@
 
     protected override void OnInitialized()
     {
-        LayoutService.SetTitle("Requests by Borough");
+        LayoutService.SetTitle(Resources.title_borough, Resources.title_requests);
     }
 
     protected override async Task OnInitializedAsync()

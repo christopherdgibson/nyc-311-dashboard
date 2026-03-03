@@ -18,9 +18,15 @@
         <article class="content">
             @if (Navigation.ToBaseRelativePath(Navigation.Uri) != "")
             {
-                @if (!string.IsNullOrEmpty(LayoutService.Title))
+                @if (!string.IsNullOrEmpty(LayoutService.MainTitle))
                 {
-                    <h1>@LayoutService.Title</h1>
+                <h1>
+                    @if (!string.IsNullOrEmpty(LayoutService.SupTitle))
+                    {
+                        <span class="h1-sub">Requests by</span>
+                    }
+                    <span class="h1-main">@LayoutService.MainTitle</span>
+                </h1>
                 }
                 @if (Navigation.ToBaseRelativePath(Navigation.Uri) != "requestsreport")
                 {

@@ -5,23 +5,24 @@ namespace NYC311Dashboard.Services.Contracts
 {
     public interface ILayoutService
     {
-        RenderFragment? CustomSidebar { get; }
+        string? MainTitle { get; }
+        string? SupTitle { get; }
 
-        public string? Title { get; }
+        RenderFragment? CustomSidebar { get; }
 
         event Action? OnSidebarChanged;
 
         event Action? OnLocationChanged;
 
-        void SetTitle(string? title);
+        void SetTitle(string? mainTitle, string? supTitle = null);
 
         void SetSidebar(RenderFragment? fragment);
 
         RenderFragment RenderSidebarButton(string buttonText, string classes, string message, Func<Task>? onConfirm);
 
-        public RenderFragment RenderInactiveSidebarButton(string buttonText, string message);
+        RenderFragment RenderInactiveSidebarButton(string buttonText, string message);
 
-        public RenderFragment RenderCustomSidebar<TItem>(
+        RenderFragment RenderCustomSidebar<TItem>(
             string label,
             IEnumerable<TItem> options,
             HashSet<TItem> selectedValues,

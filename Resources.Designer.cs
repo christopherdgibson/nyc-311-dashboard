@@ -259,15 +259,6 @@ namespace NYC311Dashboard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requests by Zip Code.
-        /// </summary>
-        public static string requests_by_zip_code {
-            get {
-                return ResourceManager.GetString("requests_by_zip_code", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Please select one or more boroughs to see zip code data..
         /// </summary>
         public static string select_boroughs_zip_code_data {
@@ -282,6 +273,33 @@ namespace NYC311Dashboard {
         public static string select_zip_codes {
             get {
                 return ResourceManager.GetString("select_zip_codes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Borough.
+        /// </summary>
+        public static string title_borough {
+            get {
+                return ResourceManager.GetString("title_borough", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requests by.
+        /// </summary>
+        public static string title_requests {
+            get {
+                return ResourceManager.GetString("title_requests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip Code.
+        /// </summary>
+        public static string title_zip_code {
+            get {
+                return ResourceManager.GetString("title_zip_code", resourceCulture);
             }
         }
     }

@@ -14,8 +14,6 @@ namespace NYC311Dashboard.Services
         private readonly ILoadingService _loadingService;
         private readonly IMessagingService _messagingService;
 
-        public RenderFragment? CustomSidebar { get; private set; }
-
         public LayoutService(NavigationManager navigation, IJSRuntime js, ILoadingService loadingService, IMessagingService messagingService)
         {
             _navigation = navigation;
@@ -26,14 +24,17 @@ namespace NYC311Dashboard.Services
             _navigation.LocationChanged += OnNavigationChanged;
         }
 
-        public string? Title { get; private set; }
+        public string? MainTitle { get; private set; }
+        public string? SupTitle { get; private set; }
 
+        public RenderFragment? CustomSidebar { get; private set; }
         public event Action? OnSidebarChanged;
         public event Action? OnLocationChanged;
 
-        public void SetTitle(string? title)
+        public void SetTitle(string? mainTitle, string? supTitle = null)
         {
-            Title = title;
+            MainTitle = mainTitle;
+            SupTitle = supTitle;
             OnSidebarChanged?.Invoke(); // reuse existing event
         }
 

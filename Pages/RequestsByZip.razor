@@ -16,10 +16,10 @@
 @if (ShowChart)
 {
     <div class="content-block">
-        <h2>Chart: Requests per hour by selected boroughs</h2>
+        <h2>Requests per hour by selected boroughs</h2>
         <div id="chart" class="apex-chart-flex-container"></div>
-
-        <h2>Table: Total requests per hour for selected zip codes</h2>
+        <hr class="section-divider" />
+        <h2>Total requests per hour for selected zip codes</h2>
         <div class="table-flex-container">
             <SortableTable Items="requestsByZipHour" Options=@GetTableOptions() />
         </div>
@@ -41,7 +41,7 @@
 
     protected override void OnInitialized()
     {
-        LayoutService.SetTitle(Resources.requests_by_zip_code);
+        LayoutService.SetTitle(Resources.title_zip_code, Resources.title_requests);
     }
 
     protected override async Task OnInitializedAsync()
