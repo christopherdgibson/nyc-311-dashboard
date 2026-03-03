@@ -82,6 +82,7 @@ namespace NYC311Dashboard.Services
                     builder.AddAttribute(4, "SelectedValuesChanged", selectedValuesChanged);
                     builder.AddAttribute(5, "OnSelectionChanged", onSelectionChanged);
                     builder.AddAttribute(6, "OptionLabel", optionLabel ?? (x => x?.ToString()));
+                    builder.AddAttribute(7, "SetIndeterminateSelection", SetIndeterminate);
                     builder.CloseComponent();
                 };
 
@@ -100,6 +101,7 @@ namespace NYC311Dashboard.Services
                 _loadingService.IsLoading = false;
             }
         }
+
         private async void OnNavigationChanged(object? sender, LocationChangedEventArgs e)
         {
             try
@@ -113,6 +115,11 @@ namespace NYC311Dashboard.Services
             }
 
             OnLocationChanged?.Invoke();
+        }
+
+        private async Task SetIndeterminate(ElementReference selectAllRef, bool IsIndeterminate)
+        {
+            await _js.InvokeVoidAsync("setIndeterminateSelection", selectAllRef, IsIndeterminate);
         }
 
         public async Task ChangeClassName(string oldClassName, string newClassName)

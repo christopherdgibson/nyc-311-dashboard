@@ -1,11 +1,9 @@
 ﻿@typeparam TItem
 
 <div class="dropdown" style="position: relative;">
-   @*  <button class="btn btn-secondary" @onclick="ToggleDropdown"> *@
     <button class="@Classes" @onclick="ToggleDropdown">
         @Label
-  @*       <i class="bi bi-chevron-double-down"></i> *@
-        <i class="bi @(showDropdown ? "bi-chevron-up" : "bi-chevron-double-down")"></i>
+        <i class="bi @(showDropdown ? "bi-chevron-double-up" : "bi-chevron-double-down")"></i>
     </button>
     @if (showDropdown)
     {
@@ -19,16 +17,19 @@
                        @onclick:stopPropagation="true" />
                 <label><strong>Select all</strong></label>
             </div>
-            @foreach (var option in Options)
+            @if (Options is not null)
             {
-                <div class="dropdown-row"
-                     @onclick="() => ToggleOption(option)">
-                    <input type="checkbox"
-                           checked="@SelectedValues.Contains(option)"
-                           @onchange="e => OnOptionChanged(e, option)"
-                           @onclick:stopPropagation="true" /> <!-- Prevents row click when clicking checkbox -->
-                    <label>@OptionLabel(option)</label>
-                </div>
+                @foreach (var option in Options)
+                {
+                    <div class="dropdown-row"
+                         @onclick="() => ToggleOption(option)">
+                        <input type="checkbox"
+                               checked="@SelectedValues.Contains(option)"
+                               @onchange="e => OnOptionChanged(e, option)"
+                               @onclick:stopPropagation="true" /> <!-- Prevents row click when clicking checkbox -->
+                        <label>@OptionLabel(option)</label>
+                    </div>
+                }
             }
         </div>
     }
@@ -41,7 +42,8 @@
     [Parameter] public HashSet<TItem> SelectedValues { get; set; } = new();
     [Parameter] public EventCallback<HashSet<TItem>> SelectedValuesChanged { get; set; }
     [Parameter] public Func<Task>? OnSelectionChanged { get; set; }
-    [Parameter] public Func<TItem, string> OptionLabel { get; set; } = x => x?.ToString();
+    [Parameter] public Func<ElementReference, bool, Task>? SetIndeterminateSelection { get; set; }
+    [Parameter] public Func<TItem, string?> OptionLabel { get; set; } = x => x?.ToString();
 
     private bool showDropdown = false;
     private ElementReference selectAllRef;
@@ -54,6 +56,11 @@
 
     private async Task ToggleSelectAll(ChangeEventArgs e)
     {
+        if (Options is null)
+        {
+            return;
+        }
+
         if (IsAllSelected)
         {
             SelectedValues.Clear();
@@ -62,13 +69,17 @@
         {
             SelectedValues.Clear();
             foreach (var option in Options)
+            {
                 SelectedValues.Add(option);
+            }
         }
 
         await SelectedValuesChanged.InvokeAsync(SelectedValues);
 
         if (OnSelectionChanged is not null)
+        {
             await OnSelectionChanged.Invoke();
+        }
     }
 
     private async Task ToggleSelectAllRow()
@@ -78,38 +89,53 @@
 
     private async Task OnOptionChanged(ChangeEventArgs e, TItem option)
     {
-        if ((bool)e.Value)
+        if (e.Value is not bool isChecked)
+        {
+            return;
+        }
+
+        if (isChecked)
+        {
             SelectedValues.Add(option);
+        }
         else
+        {
             SelectedValues.Remove(option);
+        }
 
         await SelectedValuesChanged.InvokeAsync(SelectedValues);
 
         if (OnSelectionChanged is not null)
+        {
             await OnSelectionChanged.Invoke();
+        }
     }
 
     private async Task ToggleOption(TItem option)
     {
         if (SelectedValues.Contains(option))
+        {
             SelectedValues.Remove(option);
+        }
         else
+        {
             SelectedValues.Add(option);
+        }
 
         await SelectedValuesChanged.InvokeAsync(SelectedValues);
 
         if (OnSelectionChanged is not null)
+        {
             await OnSelectionChanged.Invoke();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // Set indeterminate state for "Select all" checkbox
-        if (showDropdown)
+        if (showDropdown && SetIndeterminateSelection is not null)
         {
-            await JS.InvokeVoidAsync("setIndeterminateSelection", selectAllRef, IsIndeterminate);
+            await SetIndeterminateSelection.Invoke(selectAllRef, IsIndeterminate);
         }
     }
-
-    [Inject] private IJSRuntime JS { get; set; }
 }
