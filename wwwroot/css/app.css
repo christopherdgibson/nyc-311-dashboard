@@ -10,8 +10,8 @@
     --theme-main-color: var(--nyc_flag-blue-color);
     --theme-accent-color: var(--nyc-311-yellow);
     --sidebar-width: clamp(180px, 25vw, 250px);
+    --sidebar-closed: 30px;
     --header-height: 75px;
-    --sidebar-closed: 0;
     --btn-pageview-text-color: var(--theme-accent-color);
     --btn-pageview-bg-color: var(--theme-main-color);
     --btn-sidebar-text-color: var(--theme-main-color);
@@ -98,11 +98,11 @@ code {
     flex: 1 1 auto;
     padding: 2.5rem;
     margin-left: var(--sidebar-closed);
-    /*height: 100vh;*/
     overflow-y: visible;
     display: flex;
     flex-direction: column;
     overscroll-behavior-y: none;
+    transition: margin-left 0.3s ease;
 }
 
     .content h1, h2, h3 {
@@ -789,6 +789,16 @@ nav {
                     border-left: 2px solid #3ca0e7;
                     transition: all 0.3s ease;
                 }
+}
+
+/* ────────────────────────── Desktop styles ────────────────────────── */
+
+@media (min-width: 768px) {
+    /* When sidebar is open, push content right */
+    .sidebar-open ~ .content,
+    .sidebar.sidebar-open ~ .content {
+        margin-left: calc(var(--sidebar-closed) + var(--sidebar-width));
+    }
 }
 
 /* ────────────────────────── Loading styles ────────────────────────── */
