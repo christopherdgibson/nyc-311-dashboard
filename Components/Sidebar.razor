@@ -1,0 +1,26 @@
+﻿<div class="sidebar">
+    <div class="sidebar-body-container">
+        <div class="sidebar-body">
+            <div class="sidebar-swap-container">
+                @if (CustomSidebar != null)
+                {
+                    @CustomSidebar
+                }
+            </div>
+        </div>
+        <button class="sidebar-open-btn" @onclick="OnToggle">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Func<Task>? ToggleSidebar { get; set; }
+    [Parameter] public RenderFragment? CustomSidebar { get; set; }
+
+    private async Task OnToggle()
+    {
+        if (ToggleSidebar is not null)
+            await ToggleSidebar.Invoke();
+    }
+}

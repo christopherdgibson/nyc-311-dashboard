@@ -9,21 +9,8 @@
 <div class="">
     @if (Navigation.ToBaseRelativePath(Navigation.Uri) != "")
     {
-        <div class="sidebar">
-            <div class="sidebar-body-container">
-                <div class="sidebar-body">
-                    <div class="sidebar-swap-container">
-                        @if (LayoutService.CustomSidebar != null)
-                        {
-                            @LayoutService.CustomSidebar
-                        }
-                    </div>
-                </div>
-                <button class="sidebar-open-btn icon-btn" @onclick='() => LayoutService.ToggleClassName(".sidebar", "sidebar-open")'>
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
-        </div>
+        <Sidebar ToggleSidebar="@(() => LayoutService.ToggleClassName(".sidebar", "sidebar-open"))"
+                 CustomSidebar="@LayoutService.CustomSidebar" />
     }
 
     <main>
