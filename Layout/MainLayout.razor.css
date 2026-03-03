@@ -84,7 +84,6 @@ main {
 .sidebar-body-container {
     display: flex;
     position: relative;
-/*    flex-direction: row;*/
     height: 100%;
 }
 
@@ -99,48 +98,45 @@ main {
 }
 
     .scroll-to-top-btn:hover {
-        background-color: var(--btn-hover-color); /* Darker blue on hover */
+        background-color: var(--btn-hover-color);
     }
 
-    /* Icon size; rem for scalability */
     .scroll-to-top-btn i {
         font-size: 1.5rem;
     }
 
-
-/*.sidebar-open-btn {
-    display: flex;*/
-/*    position: fixed;
-    bottom: 20px;
-    right: 20px;*/
-    /*z-index: 10;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 40px;
-    justify-content: center;
-    align-items: center;
-    align-self: center;
-    background: none;
-    border: none;
-}*/
-
 .sidebar-open-btn {
     position: absolute;
-    right: -50px; /* protrudes outside the sidebar */
+    right: -30px;
     top: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 40px;
+    width: 30px;
+    height: 60px;
+    background-color: currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 0 8px 8px 0; /* flat on left, rounded on right */
     transform: translateY(-50%);
     transition: transform 0.3s ease;
-    z-index: 11; /* above the sidebar */
+    z-index: 10;
 }
 
+    .sidebar-open-btn i {
+        display: inline-block;
+        color: white;
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
 
-.sidebar-open .sidebar-open-btn {
-    transform: translateY(-50%) rotate(180deg) !important;
-}
+    .sidebar-open-btn i::before {
+        font-weight: bold !important;
+    }
+
+    .sidebar-open .sidebar-open-btn i {
+        transform: rotate(180deg);
+    }
 
 .scroll-to-top-mobile-btn {
     display: flex;
