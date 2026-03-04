@@ -53,16 +53,8 @@ main {
 }
 
 /* ─── Dropdown menu styles ─── */
-.dropbtn {
-    background-color: #3f51b5;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
 
-.dropdown-content {
+/*.dropdown-content {
     display: none;
     position: absolute;
     right: 0;
@@ -81,16 +73,14 @@ main {
 
         .dropdown-content a:hover {
             background-color: #f1f1f1
-        }
+        }*/
 
 /* Show dropdown content on hover */
-.dropdown:hover .dropdown-content {
+/*.dropdown:hover .dropdown-content {
     display: block;
 }
+*/
 
-.dropdown:hover .dropbtn {
-    background-color: #CADFF2;
-}
 
 /* ────────────────────────── Mobile styles ────────────────────────── */
 
