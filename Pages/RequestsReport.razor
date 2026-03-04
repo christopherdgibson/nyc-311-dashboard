@@ -18,44 +18,49 @@
 
 @if (ShowBoroughChart || ShowZipChart)
 {
-    <div id="pdf-content" class="pdf-print-area">
+    <div>
+        @LayoutService.RenderSidebarButton(
+        Resources.messaging_service_title_download,
+        "pageview-btn",
+        Resources.messaging_service_save_pdf,
+        SaveAsPdf)
+    </div>
+    <div class="pdf-page-area">
+        <div id="pdf-content" class="pdf-print-area">
 
-        <h2>
-            <span class="h1-sub">@Resources.title_download</span>
-            <span class="h1-main">@Resources.title_report</span>
-        </h2>
-@*         <div class="home-page-hero-text">
-            <div class="home-page-eyebrow">@Resources.title_download</div><!--!-->
-            <div class="home-page-title">@Resources.title_report</div>
-        </div> *@
-        <p class="report-list-title">@string.Format(Resources.report_boroughs_list_title, string.Join(", ", selectedBoroughs)).</p>
+            <h2>
+                <span class="header-suptitle">@Resources.title_download</span>
+                <span class="header-main">@Resources.title_report</span>
+            </h2>
+            <p class="report-list-title">@string.Format(Resources.report_boroughs_list_title, string.Join(", ", selectedBoroughs)).</p>
 
-        @if (ShowBoroughChart)
-        {
-            <h3>@Resources.report_boroughs_charts_title</h3>
-            <div id="@SharedJsConstants.BoroughChartId" class="apex-chart-flex-container"></div>
-
-            @if (ShowZipChart)
+            @if (ShowBoroughChart)
             {
-                <div id="@SharedJsConstants.ZipChartId" class="apex-chart-flex-container"></div>
+                <h3>@Resources.report_boroughs_charts_title</h3>
+                <div id="@SharedJsConstants.BoroughChartId" class="apex-chart-flex-container"></div>
 
-                <h3>@Resources.title_borough_requests_table</h3>
-                <div class="table-flex-container">
-                    <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
-                </div>
-                <h3>@Resources.title_zip_requests_table</h3>
-                <div class="table-flex-container">
-                    <SortableTable Items="requestsByZipHour" Options=@zipHourOptions />
-                </div>
+                @if (ShowZipChart)
+                {
+                    <div id="@SharedJsConstants.ZipChartId" class="apex-chart-flex-container"></div>
+
+                    <h3>@Resources.title_borough_requests_table</h3>
+                    <div class="table-flex-container">
+                        <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
+                    </div>
+                    <h3>@Resources.title_zip_requests_table</h3>
+                    <div class="table-flex-container">
+                        <SortableTable Items="requestsByZipHour" Options=@zipHourOptions />
+                    </div>
+                }
+                else
+                {
+                    <h3>@Resources.title_borough_requests_table</h3>
+                    <div class="table-flex-container">
+                        <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
+                    </div>
+                }
             }
-            else
-            {
-                <h3>@Resources.title_borough_requests_table</h3>
-                <div class="table-flex-container">
-                    <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
-                </div>
-            }
-        }
+        </div>
     </div>
 }
 
@@ -82,7 +87,7 @@
 
     protected override void OnInitialized()
     {
-        LayoutService.SetTitle(Resources.title_report, Resources.title_requests);
+        LayoutService.SetTitle(Resources.report_page_title, Resources.title_requests);
         boroughDateOptions = GetTableOptions<BoroughDateTableRow>(r => r.Borough);
         zipHourOptions = GetTableOptions<ZipHourTableRow>(r => r.Borough);
     }
@@ -123,7 +128,7 @@
                 SaveAsPdf)
         );
 
-        await LayoutService.ChangeClassName("content", "content-reports-page");
+        //await LayoutService.ChangeClassName("content", "content-reports-page");
 
         boroughChartNeedsRefresh = ShowBoroughChart;
         zipChartNeedsRefresh = ShowZipChart;
@@ -212,6 +217,6 @@
 
     public void Dispose()
     {
-        LayoutService.ChangeClassName("content-reports-page", "content");
+        //LayoutService.ChangeClassName("content-reports-page", "content");
     }
 }

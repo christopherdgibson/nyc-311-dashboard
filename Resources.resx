@@ -186,6 +186,9 @@
 	<data name="messaging_service_title_refresh" xml:space="preserve">
 		<value>Refresh 311 data</value>
 	</data>
+	<data name="report_page_title" xml:space="preserve">
+		<value>Report download</value>
+	</data>
 	<data name="report_boroughs_charts_title" xml:space="preserve">
 		<value>Total requests for selected boroughs and zip codes</value>
 	</data>

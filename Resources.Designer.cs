@@ -350,6 +350,15 @@ namespace NYC311Dashboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Report download.
+        /// </summary>
+        public static string report_page_title {
+            get {
+                return ResourceManager.GetString("report_page_title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to closed.
         /// </summary>
         public static string request_status_closed {

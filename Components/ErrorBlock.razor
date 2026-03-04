@@ -4,11 +4,11 @@
 
 @if (MessagingService.CurrentType == MessageType.Error)
 {
-    <div class="error-message">@MessagingService.Message</div>
+    <div class="message error-message">@MessagingService.Message</div>
 }
 else if (MessagingService.CurrentType == MessageType.Info)
 {
-    <div class="info-message">@MessagingService.Message</div>
+    <div class="message info-message">@MessagingService.Message</div>
 }
 
 <ConfirmDialog @ref="confirmDialog" OnClose="MessagingService.OnDialogClosed" />

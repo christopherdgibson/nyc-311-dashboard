@@ -7,37 +7,34 @@
 
 
 <div class="">
-    @if (Navigation.ToBaseRelativePath(Navigation.Uri) != "")
+    @if (Navigation.ToBaseRelativePath(Navigation.Uri).Contains("requestsby"))
     {
         <Sidebar ToggleSidebar="@(() => LayoutService.ToggleClassName(".sidebar", "sidebar-open"))"
                  CustomSidebar="@LayoutService.CustomSidebar" />
     }
 
-        <NavbarCustom />
-        <GlobalLoadingOverlay />
-        <article class="content">
-            @if (Navigation.ToBaseRelativePath(Navigation.Uri) != "")
+    <NavbarCustom />
+    <GlobalLoadingOverlay />
+    <article class="content">
+        @if (Navigation.ToBaseRelativePath(Navigation.Uri) != "")
+        {
+            @if (!string.IsNullOrEmpty(LayoutService.MainTitle))
             {
-                @if (!string.IsNullOrEmpty(LayoutService.MainTitle))
+            <h1>
+                @if (!string.IsNullOrEmpty(LayoutService.SupTitle))
                 {
-                <h1>
-                    @if (!string.IsNullOrEmpty(LayoutService.SupTitle))
-                    {
-                        <span class="h1-sub">@LayoutService.SupTitle</span>
-                    }
-                    <span class="h1-main">@LayoutService.MainTitle</span>
-                </h1>
+                    <span class="header-suptitle">@LayoutService.SupTitle</span>
                 }
-@*                 @if (Navigation.ToBaseRelativePath(Navigation.Uri) != "requestsreport")
-                { *@
-                    <ErrorBlock />
-            @*     } *@
-                <button class="scroll-to-top-btn icon-btn" @onclick="LayoutService.ScrollToTop">
-                    <i class="bi bi-arrow-up-circle-fill"></i>
-                </button>
+                <span class="header-main">@LayoutService.MainTitle</span>
+            </h1>
             }
-            @Body
-        </article>
+            <ErrorBlock />
+            <button class="scroll-to-top-btn icon-btn" @onclick="LayoutService.ScrollToTop">
+                <i class="bi bi-arrow-up-circle-fill"></i>
+            </button>
+        }
+        @Body
+    </article>
 </div>
 
 @code {
