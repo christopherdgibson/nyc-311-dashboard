@@ -110,10 +110,13 @@
 	<data name="data_none_available" xml:space="preserve">
 		<value>No data available</value>
 	</data>
-	<data name="groupy_category_boroughs" xml:space="preserve">
+	<data name="groupby_category_boroughs" xml:space="preserve">
 		<value>boroughs</value>
 	</data>
-	<data name="groupy_category_zip_codes" xml:space="preserve">
+	<data name="groupby_category_precinct" xml:space="preserve">
+		<value>precinct</value>
+	</data>
+	<data name="groupby_category_zip_codes" xml:space="preserve">
 		<value>zip codes</value>
 	</data>
 	<data name="empty_selction" xml:space="preserve">
@@ -146,6 +149,9 @@
 	</data>
 	<data name="label_select_options" xml:space="preserve">
 		<value>Select options</value>
+	</data>
+	<data name="label_select_precincts" xml:space="preserve">
+		<value>Select Precincts</value>
 	</data>
 	<data name="label_select_zip_codes" xml:space="preserve">
 		<value>Select Zip Codes</value>
@@ -240,13 +246,19 @@
 	<data name="title_zip_code" xml:space="preserve">
 		<value>Zip Code</value>
 	</data>
+	<data name="title_precinct_requests_chart" xml:space="preserve">
+		<value>Requests by selected boroughs</value>
+	</data>
+	<data name="title_precinct_requests_table" xml:space="preserve">
+		<value>Total requests per borough for selected precincts</value>
+	</data>
 	<data name="title_zip_requests_chart" xml:space="preserve">
 		<value>Requests per hour by selected boroughs</value>
 	</data>
 	<data name="title_zip_requests_table" xml:space="preserve">
 		<value>Total requests per hour for selected zip codes</value>
 	</data>
-	<data name="select_boroughs_zip_code_data" xml:space="preserve">
-		<value>Please select one or more boroughs to see zip code data.</value>
+	<data name="select_boroughs_for_data" xml:space="preserve">
+		<value>Please select one or more boroughs to see {0} data.</value>
 	</data>
 </root>

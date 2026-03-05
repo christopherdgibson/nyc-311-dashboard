@@ -24,11 +24,15 @@ namespace NYC311Dashboard.Services
 
         public HashSet<string>? SelectedBoroughs { get; private set; } = null;
         public HashSet<string>? SelectedZipCodes { get; private set; } = null;
+        public HashSet<string>? SelectedPrecincts { get; private set; } = null;
 
         public List<BoroughDateTableRow> RequestsByBoroughDate { get; private set; } = new();
         public List<ZipHourTableRow> RequestsByZipHour { get; private set; } = new();
+        public List<PrecinctTableRow> RequestsByPrecinct { get; private set; } = new();
 
         public List<BoroughZipSelection> BoroughZipSelections { get; private set; } = new();
+        public List<BoroughPrecinctSelection> BoroughPrecinctSelections { get; private set; } = new();
+
         public RequestService(IHttpService httpService, ILoadingService loadingService, IMessagingService messagingService)
         {
             _httpService = httpService;
@@ -93,8 +97,8 @@ namespace NYC311Dashboard.Services
             {
                 if (SelectedBoroughs == null || SelectedBoroughs.Count == 0) // bring this error up to page level and zip too?
                 {
-                    _messagingService.ShowError(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_boroughs)));
-                    return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_boroughs)));
+                    _messagingService.ShowError(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupby_category_boroughs)));
+                    return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupby_category_boroughs)));
                 }
 
                 _messagingService.Clear(); // Clear old error if no boroughs selected
@@ -212,7 +216,7 @@ namespace NYC311Dashboard.Services
         {
             if (SelectedBoroughs == null || SelectedBoroughs.Count == 0)
             {
-                return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_boroughs)));
+                return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupby_category_boroughs)));
             }
 
             foreach (var borough in SelectedBoroughs)
@@ -244,7 +248,113 @@ namespace NYC311Dashboard.Services
 
             if (SelectedZipCodes == null || SelectedZipCodes.Count == 0)
             {
-                return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_zip_codes)));
+                return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupby_category_zip_codes)));
+            }
+
+            return Result.Success();
+        }
+
+        public Result GenerateTableByPrecinct()
+        {
+            _loadingService.LoadingMessage = Resources.loading_service_loading_here;
+            _loadingService.IsLoading = true;
+
+            try
+            {
+                if (!RequestsByPrecinct.Any()) // Otherwise error will persist, but check if this clears borough errors (should return before it can?)
+                {
+                    _messagingService.Clear();
+                }
+                var result = PopulatePrecincts();
+                if (result.IsFailure)
+                {
+                    _messagingService.ShowError(result.Error);
+                    return Result.Failure(result.Error);
+                }
+
+                var requestsTable = Requests
+                    .Where(row => row.Status.Equals(Resources.request_status_closed, StringComparison.OrdinalIgnoreCase)
+                                        && SelectedBoroughs.Contains(row.Borough.ToProperCase())
+                                        && SelectedPrecincts.Contains(row.PolicePrecinct)
+                                        && row.CreatedDate.HasValue
+                                        && row.ClosedDate.HasValue)
+                    .GroupBy(row => new
+                    {
+                        Borough = row.Borough.ToProperCase(),
+                        Precinct = row.PolicePrecinct,
+                        CreatedDate = row.CreatedDate.TruncateToHour()
+                    })
+                    .Select(g =>
+                    {
+                        var aggDictionary = new PrecinctTableRow
+                        {
+                            Borough = g.Key.Borough,
+                            Precinct = g.Key.Precinct,
+                            CreatedDate = g.Key.CreatedDate,
+                            Count = g.Count(),
+                            Duration = g.Sum(row => (row.ClosedDate.Value - row.CreatedDate.Value).TotalMinutes)
+                        };
+
+                        return aggDictionary;
+                    })
+                    .ToList();
+
+                RequestsByPrecinct = requestsTable;
+
+                if (!requestsTable.Any())
+                {
+                    _messagingService.ShowInfo();
+                }
+
+                return Result.Success();
+            }
+            catch
+            {
+                _messagingService.ShowError(Resources.messaging_service_error_occurred);
+                return Result.Failure(Resources.messaging_service_error_occurred);
+            }
+            finally
+            {
+                _loadingService.IsLoading = false;
+            }
+        }
+
+        private Result PopulatePrecincts()
+        {
+            if (SelectedBoroughs == null || SelectedBoroughs.Count == 0)
+            {
+                return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupby_category_boroughs)));
+            }
+
+            foreach (var borough in SelectedBoroughs)
+            {
+                var availablePrecincts = Requests
+                    .Where(r => r.Borough?.ToProperCase() == borough && !string.IsNullOrEmpty(r.PolicePrecinct))
+                    .Select(r => r.PolicePrecinct)
+                    .Distinct()
+                    .OrderBy(z => z)
+                    .ToList();
+
+                var existing = BoroughPrecinctSelections.FirstOrDefault(b => b.Borough == borough);
+                if (existing is null)
+                {
+                    BoroughPrecinctSelections.Add(new BoroughPrecinctSelection(borough, availablePrecincts));
+                }
+                else
+                {
+                    existing.AvailablePrecincts = availablePrecincts;  // preserve existing selections
+                }
+            }
+
+            BoroughPrecinctSelections.RemoveAll(b => !SelectedBoroughs.Contains(b.Borough));
+
+            SelectedPrecincts = BoroughPrecinctSelections
+                .SelectMany(b => b.SelectedPrecincts)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            if (!(SelectedPrecincts?.Count > 0))
+            {
+                return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupby_category_precinct)));
             }
 
             return Result.Success();

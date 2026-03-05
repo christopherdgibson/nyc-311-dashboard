@@ -12,6 +12,7 @@
     {
         public const string BoroughChartId = "chart-borough";
         public const string ChartId = "chart";
+        public const string PrecinctChartId = "chart-precinct";
         public const string ZipChartId = "chart-zip";
     }
 }

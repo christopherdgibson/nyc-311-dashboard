@@ -1,16 +1,122 @@
 ﻿@inject IRequestService RequestService
 @inject IChartService ChartService
+@inject ILayoutService LayoutService
+
 @page "/requestsbyprecinct"
 
 @using CSharpFunctionalExtensions
 @using NYC311Dashboard.Components
+@using NYC311Dashboard.Constants
 @using NYC311Dashboard.Models
 @using NYC311Dashboard.Services
 @using NYC311Dashboard.Services.Contracts
 @using NYC311Dashboard.Extensions
+@using NYC311Dashboard.Services.Models
 
-<h3> Requests by Precinct</h3>
+<PageTitle>@Resources.title_precinct</PageTitle>
+
+@if (ShowChart)
+{
+    <div class="content-block">
+        <h2>@Resources.title_precinct_requests_chart</h2>
+        <div id="@SharedJsConstants.PrecinctChartId" class="apex-chart-flex-container"></div>
+        <hr class="section-divider" />
+        <h2>@Resources.title_precinct_requests_table</h2>
+        <div class="table-flex-container">
+            <SortableTable Items="requestsByPrecinct" Options=@GetTableOptions() />
+        </div>
+    </div>
+}
 
 @code {
+    private List<PrecinctTableRow>? requestsByPrecinct = new List<PrecinctTableRow>();
+    private HashSet<string>? selectedPrecincts = new();
 
+    private bool chartNeedsRefresh = false;
+    private bool ShowChart => requestsByPrecinct?.Count > 0 && selectedPrecincts?.Count > 0;
+
+    protected override void OnInitialized()
+    {
+        LayoutService.SetTitle(Resources.title_precinct, Resources.title_requests_by);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.CompletedTask; // suppress warning to leave async if needed
+
+        if (!(RequestService.Boroughs?.Count > 0))
+        {
+            LayoutService.SetSidebar(
+                LayoutService.RenderInactiveButton(Resources.data_none_available, Resources.refresh_data_boroughs_list));
+
+            return;
+        }
+
+        if (!(RequestService.SelectedBoroughs?.Count > 0)) // selected boroughs check necessary for checkbox null error. Always the case?
+        {
+            LayoutService.SetSidebar(
+                LayoutService.RenderInactiveButton(Resources.data_none_available,
+                    string.Join(" ", string.Format(Resources.empty_selction, Resources.groupby_category_boroughs), string.Format(Resources.select_boroughs_for_data, Resources.groupby_category_precinct))));
+
+            return;
+        }
+
+        RefreshRequestsByPrecinct();
+
+        // if (RequestService.RequestsByPrecinct.Count == 0) // would need to also condition on borough selection changed to keep this but maybe not worth it
+        // {
+        //     await RefreshRequestsByPrecinct();
+        // }
+        // else
+        // {
+        //     RequestsByPrecinct = RequestService.RequestsByPrecinct;
+        // }
+
+        selectedPrecincts = RequestService.SelectedPrecincts;
+
+        var configs = RequestService.BoroughPrecinctSelections.Select(b =>
+        new CheckboxDropdownConfig<string>(
+            Label: b.Borough,
+            Options: b.AvailablePrecincts,
+            SelectedValues: b.SelectedPrecincts,
+            SelectedValuesChanged: EventCallback.Factory.Create<HashSet<string>>(this,
+                v => b.SelectedPrecincts = v),
+            OnSelectionChanged: OnPrecinctSelectionChanged
+        ));
+
+        LayoutService.SetSidebar(LayoutService.RenderMultipleCheckboxDropdowns(configs, Resources.label_select_precincts));
+
+        chartNeedsRefresh = ShowChart;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!chartNeedsRefresh)
+        {
+            return;
+        }
+
+        chartNeedsRefresh = false;
+        await ChartService.RenderPrecinctChart($"#{SharedJsConstants.PrecinctChartId}");
+    }
+
+    private Task OnPrecinctSelectionChanged()
+    {
+        RefreshRequestsByPrecinct();
+        chartNeedsRefresh = ShowChart;
+        return Task.CompletedTask;
+    }
+
+    protected void RefreshRequestsByPrecinct()
+    {
+        var result = RequestService.GenerateTableByPrecinct();
+        if (result.IsFailure)
+        {
+            return;
+        }
+
+        requestsByPrecinct = new List<PrecinctTableRow>(RequestService.RequestsByPrecinct); // snapshot that keeps old data if failure
+    }
+
+    private TableOptions<PrecinctTableRow> GetTableOptions() => RequestService.GetTableOptions<PrecinctTableRow>(r => r.Borough);
 }

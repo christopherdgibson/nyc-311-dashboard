@@ -14,6 +14,8 @@ namespace NYC311Dashboard.Services.Contracts
 
         Task RenderLineChart(string elementSelector, ChartOptions? options = null);
 
+        Task RenderPrecinctChart(string elementSelector, ChartOptions? options = null);
+
         Task UpdateApexChart(ChartOptions options);
 
         Task DisposeApexChart();

@@ -153,18 +153,27 @@ namespace NYC311Dashboard {
         /// <summary>
         ///   Looks up a localized string similar to boroughs.
         /// </summary>
-        public static string groupy_category_boroughs {
+        public static string groupby_category_boroughs {
             get {
-                return ResourceManager.GetString("groupy_category_boroughs", resourceCulture);
+                return ResourceManager.GetString("groupby_category_boroughs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to precinct.
+        /// </summary>
+        public static string groupby_category_precinct {
+            get {
+                return ResourceManager.GetString("groupby_category_precinct", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to zip codes.
         /// </summary>
-        public static string groupy_category_zip_codes {
+        public static string groupby_category_zip_codes {
             get {
-                return ResourceManager.GetString("groupy_category_zip_codes", resourceCulture);
+                return ResourceManager.GetString("groupby_category_zip_codes", resourceCulture);
             }
         }
         
@@ -202,6 +211,15 @@ namespace NYC311Dashboard {
         public static string label_select_options {
             get {
                 return ResourceManager.GetString("label_select_options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Precincts.
+        /// </summary>
+        public static string label_select_precincts {
+            get {
+                return ResourceManager.GetString("label_select_precincts", resourceCulture);
             }
         }
         
@@ -368,11 +386,11 @@ namespace NYC311Dashboard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select one or more boroughs to see zip code data..
+        ///   Looks up a localized string similar to Please select one or more boroughs to see {0} data..
         /// </summary>
-        public static string select_boroughs_zip_code_data {
+        public static string select_boroughs_for_data {
             get {
-                return ResourceManager.GetString("select_boroughs_zip_code_data", resourceCulture);
+                return ResourceManager.GetString("select_boroughs_for_data", resourceCulture);
             }
         }
         
@@ -454,6 +472,24 @@ namespace NYC311Dashboard {
         public static string title_precinct {
             get {
                 return ResourceManager.GetString("title_precinct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requests by selected boroughs.
+        /// </summary>
+        public static string title_precinct_requests_chart {
+            get {
+                return ResourceManager.GetString("title_precinct_requests_chart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total requests per borough for selected precincts.
+        /// </summary>
+        public static string title_precinct_requests_table {
+            get {
+                return ResourceManager.GetString("title_precinct_requests_table", resourceCulture);
             }
         }
         

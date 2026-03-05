@@ -15,6 +15,8 @@ namespace NYC311Dashboard.Services
         public ChartOptions? BarChartByBorough { get; private set; }
         public ChartOptions? LineChartByZipHour { get; private set; }
 
+        public ChartOptions? ChartByPrecinct{ get; private set; }
+
         public ChartService(IJSRuntime js, IRequestService requestService, ILoadingService loadingService, IMessagingService messagingService)
         {
             _js = js;
@@ -34,7 +36,7 @@ namespace NYC311Dashboard.Services
                 {
                     if (!(_requestService.SelectedBoroughs?.Count > 0))
                     {
-                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupy_category_boroughs));
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupby_category_boroughs));
                         return;
                     }
 
@@ -54,7 +56,7 @@ namespace NYC311Dashboard.Services
                         new ApexSeries { Name = Resources.chart_name_total_duration, Data = totalDurations }
                     };
 
-                    var result = GetChartOptions(Resources.groupy_category_boroughs, categories, series, height: "380");
+                    var result = GetChartOptions(Resources.groupby_category_boroughs, categories, series, height: "380");
 
                     options = result.IsSuccess ? result.Value : BarChartByBorough;
                 }
@@ -89,13 +91,13 @@ namespace NYC311Dashboard.Services
                 {
                     if (!(_requestService.SelectedBoroughs?.Count > 0))
                     {
-                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupy_category_boroughs));
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupby_category_boroughs));
                         return;
                     }
 
                     if (!(_requestService.SelectedZipCodes?.Count > 0))
                     {
-                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupy_category_zip_codes));
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupby_category_zip_codes));
                         return;
                     }
 
@@ -118,12 +120,75 @@ namespace NYC311Dashboard.Services
                         })
                         .ToList();
 
-                    var result = GetChartOptions(Resources.groupy_category_zip_codes, categories, series, height: "380");
+                    var result = GetChartOptions(Resources.groupby_category_zip_codes, categories, series, height: "380");
 
                     options = result.IsSuccess ? result.Value : LineChartByZipHour;
                 }
 
                 LineChartByZipHour = options;
+
+                var error = await _js.InvokeAsync<string?>("renderApexChartMulti", elementSelector, options);
+                if (error != null)
+                {
+                    _messagingService.ShowError(error);
+                }
+            }
+            catch
+            {
+                _messagingService.ShowError(Resources.failed_to_render_chart);
+            }
+            finally
+            {
+                _loadingService.IsLoading = false;
+            }
+        }
+
+        public async Task RenderPrecinctChart(string elementSelector, ChartOptions? options = null)
+        {
+            try
+            {
+                _loadingService.LoadingMessage = Resources.loading_service_loading_here;
+                _loadingService.IsLoading = true;
+
+                if (options == null)
+                {
+                    if (!(_requestService.SelectedBoroughs?.Count > 0))
+                    {
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupby_category_boroughs));
+                        return;
+                    }
+
+                    if (!(_requestService.SelectedPrecincts?.Count > 0))
+                    {
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupby_category_precinct));
+                        return;
+                    }
+
+                    var categories = _requestService.RequestsByPrecinct
+                    .Select(r => r.CreatedDate.ToDateTimeHour())
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToList();
+
+                    var series = _requestService.SelectedBoroughs
+                        .Where(borough => _requestService.RequestsByPrecinct.Any(r => r.Borough.Equals(borough, StringComparison.OrdinalIgnoreCase) && _requestService.SelectedPrecincts.Contains(r.Precinct)))
+                        .Select(borough => new ApexSeries
+                        {
+                            Name = borough,
+                            Data = categories.Select(cat =>
+                                _requestService.RequestsByPrecinct
+                                    .Where(r => r.Borough.Equals(borough, StringComparison.OrdinalIgnoreCase) && _requestService.SelectedPrecincts.Contains(r.Precinct) && r.CreatedDate.ToDateTimeHour() == cat)
+                                    .Sum(r => r.Duration)
+                            ).ToList()
+                        })
+                        .ToList();
+
+                    var result = GetChartOptions(Resources.groupby_category_precinct, categories, series, height: "380");
+
+                    options = result.IsSuccess ? result.Value : ChartByPrecinct;
+                }
+
+                ChartByPrecinct = options;
 
                 var error = await _js.InvokeAsync<string?>("renderApexChartMulti", elementSelector, options);
                 if (error != null)
@@ -153,7 +218,7 @@ namespace NYC311Dashboard.Services
                 _loadingService.LoadingMessage = Resources.loading_service_loading_here;
                 _loadingService.IsLoading = true;
                 string type;
-                if (selection == Resources.groupy_category_boroughs)
+                if (selection == Resources.groupby_category_boroughs)
                 {
                     type = "bar";
                 }
@@ -166,7 +231,7 @@ namespace NYC311Dashboard.Services
                 {
                     _messagingService.ShowInfo(string.Format(Resources.empty_selction, selection));
                     _loadingService.IsLoading = false;
-                    return Result.Failure<ChartOptions>(string.Format(Resources.empty_selction, Resources.groupy_category_boroughs));
+                    return Result.Failure<ChartOptions>(string.Format(Resources.empty_selction, Resources.groupby_category_boroughs));
                 }
 
                 categories.Sort();

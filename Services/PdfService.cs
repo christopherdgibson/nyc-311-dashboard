@@ -1,5 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using NYC311Dashboard.Intrastructure.Contracts;
 using NYC311Dashboard.Services.Contracts;
 using NYC311Dashboard.Services.Models;
 
