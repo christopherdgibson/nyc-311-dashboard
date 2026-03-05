@@ -5,6 +5,6 @@
         public string Borough { get; set; }
         public DateOnly? CreatedDate { get; set; }
         public int Count { get; set; }
-        public double OpenTime { get; set; }
+        public double Duration { get; set; }
     }
 }

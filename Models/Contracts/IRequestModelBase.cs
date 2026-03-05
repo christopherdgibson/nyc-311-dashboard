@@ -4,6 +4,6 @@
     {
         string Borough { get; set; }
         DateTime? CreatedDate { get; set; }
-        double OpenTime { get; set; }
+        double Duration { get; set; }
     }
 }

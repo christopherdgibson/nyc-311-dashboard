@@ -1,17 +1,11 @@
 ﻿@inject ILayoutService LayoutService
-@implements IDisposable;
 @page "/"
 @using NYC311Dashboard.Services.Contracts
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@Resources.title_home</PageTitle>
 
-
-@* <div class="home-page-container">
-    <div class="home-page-title">Welcome to the NYC 311 Dashboard!</div>
-    <img class="nyc-home-image" src="images/nyc_background.png" alt="New York City" />
-</div> *@
 <div class="home-page-container">
-    <img class="nyc-home-image" src="images/nyc_background.png" alt="New York City" />
+    <img class="nyc-home-image" src="images/nyc_background.png" alt="@Resources.title_home_page_eyebrow" />
     <div class="home-page-hero-text">
         <div class="home-page-eyebrow">@Resources.title_home_page_eyebrow</div>
         <div class="home-page-title">@Resources.title_home_page</div>
@@ -47,11 +41,5 @@
     protected override async Task OnInitializedAsync()
     {
         LayoutService.SetSidebar(null);
-        //await LayoutService.ToggleClassName("article", "content");
-    }
-
-    public void Dispose()
-    {
-        //LayoutService.ToggleClassName("article", "content");
     }
 }

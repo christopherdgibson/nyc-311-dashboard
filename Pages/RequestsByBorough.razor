@@ -14,6 +14,8 @@
 @using System.Text.Json
 @using NYC311Dashboard.Services.Models
 
+<PageTitle>@Resources.title_borough</PageTitle>
+
 @if (ShowChart)
 {
     <div class="content-block">
@@ -28,17 +30,13 @@
 }
 
 @code {
-    private List<RequestModel> requests = new List<RequestModel>();
-    private List<BoroughDateTableRow> requestsByBorough = new List<BoroughDateTableRow>();
-    private List<string> boroughs = new();
+    private List<BoroughDateTableRow>? requestsByBorough = new List<BoroughDateTableRow>();
     private HashSet<string>? selectedBoroughs = new();
-    private ChartOptions? chartOptions = new();
-
-    //private DotNetObjectReference<RequestsByBorough>? dotNetRef;
 
     private bool chartNeedsRefresh = false;
+    private bool ShowChart => requestsByBorough?.Count > 0 && selectedBoroughs?.Count > 0;
 
-    private bool ShowChart => requestsByBorough != null && requestsByBorough.Any() && selectedBoroughs!= null && selectedBoroughs.Any();
+    //private DotNetObjectReference<RequestsByBorough>? dotNetRef;
 
     protected override void OnInitialized()
     {
@@ -47,6 +45,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await Task.CompletedTask; // suppress warning to leave async if needed
+
         if (RequestService.Boroughs.Count == 0)
         {
             LayoutService.SetSidebar(
@@ -55,23 +55,21 @@
             return;
         }
 
-        if (RequestService.RequestsByBoroughDate.Count == 0)
+        if (!(RequestService.RequestsByBoroughDate?.Count > 0))
         {
-            await RefreshRequestsByBorough();
+            RefreshRequestsByBorough();
         }
         else
         {
-            requestsByBorough = RequestService.RequestsByBoroughDate;
+            requestsByBorough = new List<BoroughDateTableRow>(RequestService.RequestsByBoroughDate);
         }
 
-        requests = RequestService.Requests;
-        boroughs = RequestService.Boroughs;
         selectedBoroughs = RequestService.SelectedBoroughs;
 
         var configs =
             new CheckboxDropdownConfig<string>(
             Label: Resources.title_borough,
-            Options: boroughs,
+            Options: RequestService.Boroughs,
             SelectedValues: selectedBoroughs,
             SelectedValuesChanged: EventCallback.Factory.Create<HashSet<string>>(this, v => selectedBoroughs = v),
             OnSelectionChanged: OnBoroughSelectionChanged)
@@ -107,44 +105,23 @@
     //     await ChartService.RenderBarChart(chartOptions);
     // }
 
-    private async Task OnBoroughSelectionChanged()
+    private Task OnBoroughSelectionChanged()
     {
-        await RefreshRequestsByBorough();
+        RefreshRequestsByBorough();
         chartNeedsRefresh = ShowChart;
+        return Task.CompletedTask;
     }
 
-    protected async Task RefreshRequestsByBorough()
+    protected void RefreshRequestsByBorough()
     {
-        requestsByBorough.Clear();
-
         var result = RequestService.GenerateTableByBoroughDay();
         if (result.IsFailure)
         {
             return;
         }
 
-        requestsByBorough = RequestService.RequestsByBoroughDate;
+        requestsByBorough = new List<BoroughDateTableRow>(RequestService.RequestsByBoroughDate);
     }
 
-    protected TableOptions<BoroughDateTableRow> GetTableOptions() // todo: move this to service? Can use common base
-    {
-        var options = new TableOptions<BoroughDateTableRow>
-        {
-            GroupBy = r => r.Borough,
-            TableStyles = "table-flex-item"
-        };
-
-        return options;
-    }
-
-    public void Dispose()
-    {
-        //dotNetRef?.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await ChartService.DisposeApexChart();
-        //LayoutService.SetSidebar(null);
-    }
+    private TableOptions<BoroughDateTableRow> GetTableOptions() => RequestService.GetTableOptions<BoroughDateTableRow>(r => r.Borough);
 }

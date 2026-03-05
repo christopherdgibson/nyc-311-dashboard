@@ -5,6 +5,7 @@ using NYC311Dashboard.Intrastructure.Contracts;
 using NYC311Dashboard.Models;
 using NYC311Dashboard.Services.Contracts;
 using NYC311Dashboard.Services.Models;
+using System.Linq.Expressions;
 
 
 namespace NYC311Dashboard.Services
@@ -20,11 +21,9 @@ namespace NYC311Dashboard.Services
         public List<RequestModel> Requests { get; private set; } = new();
 
         public List<string> Boroughs { get; private set; } = new();
-        public List<string> ZipCodes { get; private set; } = new();
 
         public HashSet<string>? SelectedBoroughs { get; private set; } = null;
         public HashSet<string>? SelectedZipCodes { get; private set; } = null;
-        private HashSet<string> SelectedZipBoroughs = new();
 
         public List<BoroughDateTableRow> RequestsByBoroughDate { get; private set; } = new();
         public List<ZipHourTableRow> RequestsByZipHour { get; private set; } = new();
@@ -75,6 +74,17 @@ namespace NYC311Dashboard.Services
             }
         }
 
+        public TableOptions<T> GetTableOptions<T>(Expression<Func<T, string>>? groupBy)
+        {
+            var options = new TableOptions<T>
+            {
+                GroupBy = groupBy,
+                TableStyles = "table-flex-item"
+            };
+
+            return options;
+        }
+
         public Result GenerateTableByBoroughDay()
         {
             _loadingService.LoadingMessage = Resources.loading_service_loading_here;
@@ -106,7 +116,7 @@ namespace NYC311Dashboard.Services
                             Borough = g.Key.Borough,
                             CreatedDate = g.Key.CreatedDate,
                             Count = g.Count(),
-                            OpenTime = g.Sum(row => (row.ClosedDate.Value - row.CreatedDate.Value).TotalMinutes)
+                            Duration = g.Sum(row => (row.ClosedDate.Value - row.CreatedDate.Value).TotalMinutes)
                         };
 
                         return aggDictionary;
@@ -171,7 +181,7 @@ namespace NYC311Dashboard.Services
                             Zip = g.Key.Zip,
                             CreatedDate = g.Key.CreatedDate,
                             Count = g.Count(),
-                            OpenTime = g.Sum(row => (row.ClosedDate.Value - row.CreatedDate.Value).TotalMinutes)
+                            Duration = g.Sum(row => (row.ClosedDate.Value - row.CreatedDate.Value).TotalMinutes)
                         };
 
                         return aggDictionary;
@@ -201,17 +211,9 @@ namespace NYC311Dashboard.Services
         private Result PopulateZipCodes()
         {
             if (SelectedBoroughs == null || SelectedBoroughs.Count == 0)
+            {
                 return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_boroughs)));
-
-            ZipCodes = Requests
-                .Where(r => !string.IsNullOrWhiteSpace(r.Borough)
-                    && SelectedBoroughs.Contains(r.Borough.ToProperCase())
-                    && !r.Borough.Equals(Resources.borough_unspecified, StringComparison.OrdinalIgnoreCase)
-                    && !string.IsNullOrEmpty(r.IncidentZip))
-                .Select(r => r.IncidentZip)
-                .Distinct()
-                .OrderBy(b => b)
-                .ToList();
+            }
 
             foreach (var borough in SelectedBoroughs)
             {
@@ -224,9 +226,13 @@ namespace NYC311Dashboard.Services
 
                 var existing = BoroughZipSelections.FirstOrDefault(b => b.Borough == borough);
                 if (existing is null)
+                {
                     BoroughZipSelections.Add(new BoroughZipSelection(borough, availableZips));  // all zips selected by default
+                }
                 else
+                {
                     existing.AvailableZips = availableZips;  // preserve existing selections
+                }
             }
 
             BoroughZipSelections.RemoveAll(b => !SelectedBoroughs.Contains(b.Borough));
@@ -236,10 +242,10 @@ namespace NYC311Dashboard.Services
                 .SelectMany(b => b.SelectedZips)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            SelectedZipBoroughs = new HashSet<string>(SelectedBoroughs, StringComparer.OrdinalIgnoreCase);
-
             if (SelectedZipCodes == null || SelectedZipCodes.Count == 0)
+            {
                 return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_zip_codes)));
+            }
 
             return Result.Success();
         }

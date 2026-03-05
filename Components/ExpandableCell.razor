@@ -1,10 +1,10 @@
 ﻿@code {
-    [Parameter] public string Text { get; set; }
+    [Parameter] public string? Text { get; set; }
     [Parameter] public int MaxLength { get; set; } = 100;
 
     private bool expanded = false;
 
-    private string DisplayText => expanded ? Text : Text.Substring(0, MaxLength) + "...";
+    private string? DisplayText => expanded ? Text : Text?.Substring(0, MaxLength) + "...";
 }
 
 <div style="display: flex; align-items: flex-start;">

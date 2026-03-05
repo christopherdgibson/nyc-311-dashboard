@@ -9,7 +9,7 @@
 
         public DateTime? ClosedDate { get; set; }
 
-        public double OpenTime { get; set; }
+        public double Duration { get; set; }
 
         public string Agency { get; set; }
 

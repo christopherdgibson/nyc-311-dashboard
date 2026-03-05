@@ -8,7 +8,6 @@ namespace NYC311Dashboard.Services
     public class PdfService : IPdfService
     {
         private readonly IJSRuntime _js;
-        private readonly IHttpService _httpService;
         private readonly ILoadingService _loadingService;
         private readonly IMessagingService _messagingService;
 
@@ -21,11 +20,11 @@ namespace NYC311Dashboard.Services
 
         public async Task RenderPdfDownload(string elementId, PdfOptions options)
         {
+            _loadingService.LoadingMessage = Resources.loading_service_loading_here;
+            _loadingService.IsLoading = true;
+            await Task.Yield();
             try
             {
-                _loadingService.LoadingMessage = Resources.loading_service_loading_here;
-                _loadingService.IsLoading = true;
-
                 await _js.InvokeVoidAsync("scrollToTop", "instant");
                 await _js.InvokeVoidAsync("saveElementAsPdf", "pdf-content", options);
             }
@@ -39,5 +38,31 @@ namespace NYC311Dashboard.Services
                 _loadingService.IsLoading = false;
             }
         }
+
+        public PdfOptions GetPdfOptions() => new PdfOptions
+        {
+            Margin = [10, 10, 10, 10],
+            FileName = "custom.pdf",
+            Image = new ImageOptions
+            {
+                Type = "jpeg",
+                Quality = 0.98
+            },
+            Html2Canvas = new Html2CanvasOptions
+            {
+                Scale = 2
+            },
+            JsPDF = new JsPdfOptions
+            {
+                Unit = "mm",
+                Format = "a4",
+                Orientation = "portrait"
+            },
+            PageBreak = new PageBreak
+            {
+                Mode = ["css"],
+                Avoid = ["tr", "td", "h2", "h3", "h4"]
+            }
+        };
     }
 }

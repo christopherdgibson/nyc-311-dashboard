@@ -32,10 +32,16 @@ namespace NYC311Dashboard.Services
 
                 if (options == null)
                 {
+                    if (!(_requestService.SelectedBoroughs?.Count > 0))
+                    {
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupy_category_boroughs));
+                        return;
+                    }
+
                     var categories = _requestService.SelectedBoroughs.ToList();
 
                     var totalDurations = _requestService.SelectedBoroughs
-                        .Select(b => _requestService.RequestsByBoroughDate.Where(r => r.Borough.Equals(b, StringComparison.OrdinalIgnoreCase)).Sum(r => r.OpenTime))
+                        .Select(b => _requestService.RequestsByBoroughDate.Where(r => r.Borough.Equals(b, StringComparison.OrdinalIgnoreCase)).Sum(r => r.Duration))
                         .ToList();
 
                     var totalCounts = _requestService.SelectedBoroughs
@@ -81,6 +87,18 @@ namespace NYC311Dashboard.Services
 
                 if (options == null)
                 {
+                    if (!(_requestService.SelectedBoroughs?.Count > 0))
+                    {
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupy_category_boroughs));
+                        return;
+                    }
+
+                    if (!(_requestService.SelectedZipCodes?.Count > 0))
+                    {
+                        _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupy_category_zip_codes));
+                        return;
+                    }
+
                     var categories = _requestService.RequestsByZipHour
                     .Select(r => r.CreatedDate.ToDateTimeHour())
                     .Distinct()
@@ -95,7 +113,7 @@ namespace NYC311Dashboard.Services
                             Data = categories.Select(cat =>
                                 _requestService.RequestsByZipHour
                                     .Where(r => r.Borough.Equals(borough, StringComparison.OrdinalIgnoreCase) && _requestService.SelectedZipCodes.Contains(r.Zip) && r.CreatedDate.ToDateTimeHour() == cat)
-                                    .Sum(r => r.OpenTime)
+                                    .Sum(r => r.Duration)
                             ).ToList()
                         })
                         .ToList();

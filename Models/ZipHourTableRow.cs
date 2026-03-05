@@ -6,6 +6,6 @@
         public string Zip { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int Count { get; set; }
-        public double OpenTime { get; set; }
+        public double Duration { get; set; }
     }
 }

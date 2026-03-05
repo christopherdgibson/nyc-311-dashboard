@@ -6,6 +6,6 @@ namespace NYC311Dashboard.Models
     {
         public string Borough { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public double OpenTime { get; set; }
+        public double Duration { get; set; }
     }
 }

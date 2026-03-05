@@ -1,7 +1,6 @@
 ﻿@inject IRequestService RequestService
 @inject IChartService ChartService
 @inject ILayoutService LayoutService
-@inject IMessagingService MessagingService
 
 @page "/requestsbyzip"
 
@@ -13,6 +12,8 @@
 @using NYC311Dashboard.Services.Contracts
 @using NYC311Dashboard.Extensions
 @using NYC311Dashboard.Services.Models
+
+<PageTitle>@Resources.title_zip_code</PageTitle>
 
 @if (ShowChart)
 {
@@ -28,18 +29,11 @@
 }
 
 @code {
-    private List<RequestModel> requests = new List<RequestModel>();
-    private List<ZipHourTableRow> requestsByZipHour = new List<ZipHourTableRow>();
-    private List<string> boroughs = new();
-    private List<string> zipCodes = new();
-    private HashSet<string>? selectedBoroughs = new();
+    private List<ZipHourTableRow>? requestsByZipHour = new List<ZipHourTableRow>();
     private HashSet<string>? selectedZipCodes = new();
 
-    private Dictionary<string, List<string>> zipCodesByBorough = new();
-    private Dictionary<string, HashSet<string>> selectedZipCodesByBorough = new();
-
     private bool chartNeedsRefresh = false;
-    private bool ShowChart => requestsByZipHour != null && requestsByZipHour.Count != 0 && selectedZipCodes != null && selectedZipCodes.Any();
+    private bool ShowChart => requestsByZipHour?.Count > 0 && selectedZipCodes?.Count > 0;
 
     protected override void OnInitialized()
     {
@@ -48,24 +42,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (RequestService.Boroughs.Count == 0) // selected boroughs check necessary for checkbox null error. Always the case?
+        await Task.CompletedTask; // suppress warning to leave async if needed
+
+        if (!(RequestService.Boroughs?.Count > 0))
         {
             LayoutService.SetSidebar(
-                LayoutService.RenderInactiveButton(Resources.data_none_available, Resources.refresh_data_boroughs_list)
-        );
+                LayoutService.RenderInactiveButton(Resources.data_none_available, Resources.refresh_data_boroughs_list));
+
             return;
         }
 
         if (!(RequestService.SelectedBoroughs?.Count > 0)) // selected boroughs check necessary for checkbox null error. Always the case?
         {
             LayoutService.SetSidebar(
-                LayoutService.RenderInactiveButton(Resources.data_none_available, string.Join(" ", string.Format(Resources.empty_selction, Resources.groupy_category_boroughs), Resources.select_boroughs_zip_code_data))
-        );
+                LayoutService.RenderInactiveButton(Resources.data_none_available, 
+                    string.Join(" ", string.Format(Resources.empty_selction, Resources.groupy_category_boroughs), Resources.select_boroughs_zip_code_data)));
+
             return;
         }
 
-        await RefreshRequestsByZipHour();
-
+        RefreshRequestsByZipHour();
 
         // if (RequestService.RequestsByZipHour.Count == 0) // would need to also condition on borough selection changed to keep this but maybe not worth it
         // {
@@ -76,10 +72,6 @@
         //     requestsByZipHour = RequestService.RequestsByZipHour;
         // }
 
-        requests = RequestService.Requests;
-        boroughs = RequestService.Boroughs;
-        zipCodes = RequestService.ZipCodes;
-        selectedBoroughs = RequestService.SelectedBoroughs;
         selectedZipCodes = RequestService.SelectedZipCodes;
 
         var configs = RequestService.BoroughZipSelections.Select(b =>
@@ -108,38 +100,23 @@
         await ChartService.RenderLineChart($"#{SharedJsConstants.ZipChartId}");
     }
 
-    private async Task OnZipSelectionChanged()
+    private Task OnZipSelectionChanged()
     {
-        await RefreshRequestsByZipHour();
+        RefreshRequestsByZipHour();
         chartNeedsRefresh = ShowChart;
+        return Task.CompletedTask;
     }
 
-    protected async Task RefreshRequestsByZipHour()
+    protected void RefreshRequestsByZipHour()
     {
-        requestsByZipHour.Clear();
-
         var result = RequestService.GenerateTableByZipHour();
         if (result.IsFailure)
         {
             return;
         }
 
-        requestsByZipHour = RequestService.RequestsByZipHour;
+        requestsByZipHour = new List<ZipHourTableRow>(RequestService.RequestsByZipHour); // snapshot that keeps old data if failure
     }
 
-    protected TableOptions<ZipHourTableRow> GetTableOptions()
-    {
-        var options = new TableOptions<ZipHourTableRow>
-            {
-                GroupBy = r => r.Borough,
-                TableStyles = "table-flex-item"
-            };
-
-            return options;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await ChartService.DisposeApexChart();
-    }
+    private TableOptions<ZipHourTableRow> GetTableOptions() => RequestService.GetTableOptions<ZipHourTableRow>(r => r.Borough);
 }

@@ -2,7 +2,6 @@
 @inject IChartService ChartService
 @inject IPdfService PdfService
 @inject ILayoutService LayoutService
-@implements IDisposable
 
 @page "/requestsreport"
 
@@ -15,6 +14,8 @@
 @using NYC311Dashboard.Extensions
 @using NYC311Dashboard.Services.Models
 @using System.Linq.Expressions
+
+<PageTitle>@Resources.title_report</PageTitle>
 
 @if (ShowBoroughChart || ShowZipChart)
 {
@@ -65,22 +66,16 @@
 }
 
 @code {
-    private List<RequestModel> requests = new List<RequestModel>();
     private List<BoroughDateTableRow> requestsByBoroughDate = new List<BoroughDateTableRow>();
     private List<ZipHourTableRow> requestsByZipHour = new List<ZipHourTableRow>();
-    private List<string> boroughs = new();
-    private List<string> zipCodes = new();
-    private HashSet<string> selectedBoroughs = new();
-    private HashSet<string> selectedZipCodes = new();
-    private ChartOptions? boroughChartOptions;
-    private ChartOptions? zipChartOptions;
+    private HashSet<string>? selectedBoroughs = new();
+    private HashSet<string>? selectedZipCodes = new();
 
     private bool zipChartNeedsRefresh = false;
     private bool boroughChartNeedsRefresh = false;
-    private int sortOrder = 0;
 
-    private bool ShowBoroughChart => requestsByBoroughDate != null && requestsByBoroughDate.Count != 0 && selectedBoroughs.Any();
-    private bool ShowZipChart => requestsByZipHour != null && requestsByZipHour.Count != 0 && selectedZipCodes.Any();
+    private bool ShowBoroughChart => requestsByBoroughDate != null && requestsByBoroughDate.Count != 0 && selectedBoroughs?.Count > 0;
+    private bool ShowZipChart => requestsByZipHour != null && requestsByZipHour.Count != 0 && selectedZipCodes?.Count > 0;
 
     private TableOptions<BoroughDateTableRow>? boroughDateOptions;
     private TableOptions<ZipHourTableRow>? zipHourOptions;
@@ -88,8 +83,8 @@
     protected override void OnInitialized()
     {
         LayoutService.SetTitle(Resources.report_page_title, Resources.title_requests);
-        boroughDateOptions = GetTableOptions<BoroughDateTableRow>(r => r.Borough);
-        zipHourOptions = GetTableOptions<ZipHourTableRow>(r => r.Borough);
+        boroughDateOptions = RequestService.GetTableOptions<BoroughDateTableRow>(r => r.Borough);
+        zipHourOptions = RequestService.GetTableOptions<ZipHourTableRow>(r => r.Borough);
     }
 
 
@@ -104,9 +99,6 @@
         }
 
         await RefreshRequestsByZipHour();
-        requests = RequestService.Requests;
-        boroughs = RequestService.Boroughs;
-        zipCodes = RequestService.ZipCodes;
         selectedBoroughs = RequestService.SelectedBoroughs;
         selectedZipCodes = RequestService.SelectedZipCodes;
 
@@ -128,8 +120,6 @@
                 SaveAsPdf)
         );
 
-        //await LayoutService.ChangeClassName("content", "content-reports-page");
-
         boroughChartNeedsRefresh = ShowBoroughChart;
         zipChartNeedsRefresh = ShowZipChart;
     }
@@ -149,17 +139,6 @@
         }
 
     }   
-
-    protected TableOptions<T> GetTableOptions<T>(Expression<Func<T, string>>? groupBy)
-    {
-        var options = new TableOptions<T>
-        {
-            GroupBy = groupBy,
-            TableStyles = "table-flex-item"
-        };
-
-        return options;
-    }
 
     protected async Task RefreshRequestsByZipHour()
     {
@@ -187,36 +166,7 @@
 
     private async Task SaveAsPdf()
     {
-        var options = new PdfOptions
-        {
-            Margin = [10, 10, 10, 10],
-            FileName = "custom.pdf",
-            Image = new ImageOptions
-            {
-                Type = "jpeg",
-                Quality = 0.98
-            },
-            Html2Canvas = new Html2CanvasOptions
-            {
-                Scale = 2
-            },
-            JsPDF = new JsPdfOptions
-            {
-                Unit = "mm",
-                Format = "a4",
-                Orientation = "portrait"
-            },
-            PageBreak = new PageBreak
-            {
-                Mode = ["css"],
-                Avoid = ["tr", "td", "h2", "h3", "h4"]
-            }
-        };
+        var options = PdfService.GetPdfOptions();
         await PdfService.RenderPdfDownload("pdf-content", options);
-    }
-
-    public void Dispose()
-    {
-        //LayoutService.ChangeClassName("content-reports-page", "content");
     }
 }
