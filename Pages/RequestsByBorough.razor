@@ -50,7 +50,7 @@
         if (RequestService.Boroughs.Count == 0)
         {
             LayoutService.SetSidebar(
-                LayoutService.RenderInactiveSidebarButton(Resources.data_none_available, Resources.refresh_data_boroughs_list)
+                LayoutService.RenderInactiveButton(Resources.data_none_available, Resources.refresh_data_boroughs_list)
         );
             return;
         }
@@ -68,7 +68,7 @@
         boroughs = RequestService.Boroughs;
         selectedBoroughs = RequestService.SelectedBoroughs;
 
-        LayoutService.SetSidebar(LayoutService.RenderCustomSidebar(
+        LayoutService.SetSidebar(LayoutService.RenderCheckboxDropdown(
              Resources.label_select_boroughs,
              boroughs,
              selectedBoroughs,

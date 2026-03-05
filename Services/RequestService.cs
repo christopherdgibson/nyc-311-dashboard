@@ -1,9 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
 using NYC311Dashboard.Constants;
-using NYC311Dashboard.Intrastructure.Contracts;
-using NYC311Dashboard.Services.Contracts;
 using NYC311Dashboard.Extensions;
+using NYC311Dashboard.Intrastructure.Contracts;
 using NYC311Dashboard.Models;
+using NYC311Dashboard.Services.Contracts;
+using NYC311Dashboard.Services.Models;
 
 
 namespace NYC311Dashboard.Services
@@ -28,6 +29,7 @@ namespace NYC311Dashboard.Services
         public List<BoroughDateTableRow> RequestsByBoroughDate { get; private set; } = new();
         public List<ZipHourTableRow> RequestsByZipHour { get; private set; } = new();
 
+        public List<BoroughZipSelection> BoroughZipSelections { get; private set; } = new();
         public RequestService(IHttpService httpService, ILoadingService loadingService, IMessagingService messagingService)
         {
             _httpService = httpService;
@@ -199,51 +201,45 @@ namespace NYC311Dashboard.Services
         private Result PopulateZipCodes()
         {
             if (SelectedBoroughs == null || SelectedBoroughs.Count == 0)
-            {
                 return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_boroughs)));
-            }
 
             ZipCodes = Requests
-            .Where(r => !string.IsNullOrWhiteSpace(r.Borough)
-                && SelectedBoroughs.Contains(r.Borough.ToProperCase())
-                && !r.Borough.Equals(Resources.borough_unspecified, StringComparison.OrdinalIgnoreCase)
-                && !string.IsNullOrEmpty(r.IncidentZip))
-            .Select(r => r.IncidentZip)
-            .Distinct()
-            .OrderBy(b => b)
-            .ToList();
+                .Where(r => !string.IsNullOrWhiteSpace(r.Borough)
+                    && SelectedBoroughs.Contains(r.Borough.ToProperCase())
+                    && !r.Borough.Equals(Resources.borough_unspecified, StringComparison.OrdinalIgnoreCase)
+                    && !string.IsNullOrEmpty(r.IncidentZip))
+                .Select(r => r.IncidentZip)
+                .Distinct()
+                .OrderBy(b => b)
+                .ToList();
 
-            // If any boroughs were newly added, add their zips to SelectedZipCodes
-            var newlyAddedBoroughs = SelectedBoroughs.Except(SelectedZipBoroughs).ToList();
-            if (newlyAddedBoroughs.Any())
+            foreach (var borough in SelectedBoroughs)
             {
-                var zipsToAdd = Requests
-                    .Where(r => newlyAddedBoroughs.Contains(r.Borough) && !string.IsNullOrEmpty(r.IncidentZip))
+                var availableZips = Requests
+                    .Where(r => r.Borough?.ToProperCase() == borough && !string.IsNullOrEmpty(r.IncidentZip))
                     .Select(r => r.IncidentZip)
-                    .Distinct();
+                    .Distinct()
+                    .OrderBy(z => z)
+                    .ToList();
 
-                if (SelectedZipCodes == null)
-                {
-                    SelectedZipCodes = ZipCodes.ToHashSet();
-                }
+                var existing = BoroughZipSelections.FirstOrDefault(b => b.Borough == borough);
+                if (existing is null)
+                    BoroughZipSelections.Add(new BoroughZipSelection(borough, availableZips));  // all zips selected by default
                 else
-                {
-                    foreach (var zip in zipsToAdd)
-                    {
-                        SelectedZipCodes.Add(zip);
-                    }
-                }
+                    existing.AvailableZips = availableZips;  // preserve existing selections
             }
+
+            BoroughZipSelections.RemoveAll(b => !SelectedBoroughs.Contains(b.Borough));
+
+            // single source of truth — model drives flat SelectedZipCodes
+            SelectedZipCodes = BoroughZipSelections
+                .SelectMany(b => b.SelectedZips)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             SelectedZipBoroughs = new HashSet<string>(SelectedBoroughs, StringComparer.OrdinalIgnoreCase);
 
-            // If SelectedZipCodes is null (first load), set to all zip codes
-            SelectedZipCodes ??= new HashSet<string>(ZipCodes, StringComparer.OrdinalIgnoreCase);
-
             if (SelectedZipCodes == null || SelectedZipCodes.Count == 0)
-            {
                 return Result.Failure(string.Join(" ", string.Format(Resources.empty_selction_table, Resources.groupy_category_zip_codes)));
-            }
 
             return Result.Success();
         }

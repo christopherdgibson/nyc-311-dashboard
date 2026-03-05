@@ -19,7 +19,7 @@
 @if (ShowBoroughChart || ShowZipChart)
 {
     <div>
-        @LayoutService.RenderSidebarButton(
+        @LayoutService.RenderButton(
         Resources.messaging_service_title_download,
         "pageview-btn",
         Resources.messaging_service_save_pdf,
@@ -98,7 +98,7 @@
         if (RequestService.Boroughs.Count == 0)
         {
             LayoutService.SetSidebar(
-                LayoutService.RenderInactiveSidebarButton(Resources.data_none_available, Resources.refresh_data_boroughs_list)
+                LayoutService.RenderInactiveButton(Resources.data_none_available, Resources.refresh_data_boroughs_list)
         );
             return;
         }
@@ -121,7 +121,7 @@
         // }
 
         LayoutService.SetSidebar(
-            LayoutService.RenderSidebarButton(
+            LayoutService.RenderButton(
                 Resources.messaging_service_title_download,
                 "sidebar-btn",
                 Resources.messaging_service_save_pdf,

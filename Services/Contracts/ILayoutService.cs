@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Threading.Tasks;
+using NYC311Dashboard.Services.Models;
 
 namespace NYC311Dashboard.Services.Contracts
 {
@@ -18,11 +18,11 @@ namespace NYC311Dashboard.Services.Contracts
 
         void SetSidebar(RenderFragment? fragment);
 
-        RenderFragment RenderSidebarButton(string buttonText, string classes, string message, Func<Task>? onConfirm);
+        RenderFragment RenderButton(string buttonText, string classes, string message, Func<Task>? onConfirm);
 
-        RenderFragment RenderInactiveSidebarButton(string buttonText, string message);
+        RenderFragment RenderInactiveButton(string buttonText, string message);
 
-        RenderFragment RenderCustomSidebar<TItem>(
+        RenderFragment RenderCheckboxDropdown<TItem>(
             string label,
             IEnumerable<TItem> options,
             HashSet<TItem> selectedValues,
@@ -30,6 +30,8 @@ namespace NYC311Dashboard.Services.Contracts
             Func<Task>? onSelectionChanged,
             bool inactive = false,
             Func<TItem, string>? optionLabel = null);
+
+        RenderFragment RenderMultipleCheckboxDropdowns<TItem>(IEnumerable<CheckboxDropdownConfig<TItem>> configs);
 
         Task ScrollToTop();
 

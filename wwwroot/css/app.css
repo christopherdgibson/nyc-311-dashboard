@@ -725,10 +725,6 @@ h1 {
 
 /* ────────────────────────── Checkbox dropdown styles ────────────────────────── */
 
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
 .dropdown-content {
     position: absolute;
     top: 100%;
@@ -766,6 +762,10 @@ h1 {
     .dropdown-row input[type="checkbox"] {
         accent-color: var(--theme-main-color);
     }
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
 
 /* ────────────────────────── Navbar styles ────────────────────────── */
 

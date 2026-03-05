@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using NYC311Dashboard.Components;
 using NYC311Dashboard.Services.Contracts;
+using NYC311Dashboard.Services.Models;
 
 namespace NYC311Dashboard.Services
 {
@@ -42,7 +43,7 @@ namespace NYC311Dashboard.Services
             CustomSidebar = fragment;
             OnSidebarChanged?.Invoke();
         }
-        public RenderFragment RenderInactiveSidebarButton(string buttonText, string message) => builder =>
+        public RenderFragment RenderInactiveButton(string buttonText, string message) => builder =>
         {
             builder.OpenElement(0, "button");
             builder.AddAttribute(1, "class", "sidebar-btn");
@@ -51,7 +52,7 @@ namespace NYC311Dashboard.Services
             builder.CloseElement();
         };
 
-        public RenderFragment RenderSidebarButton(string buttonText, string classes, string message, Func<Task>? onConfirm) => builder =>
+        public RenderFragment RenderButton(string buttonText, string classes, string message, Func<Task>? onConfirm) => builder =>
         {
             builder.OpenElement(0, "button");
             builder.AddAttribute(1, "class", classes);
@@ -60,7 +61,7 @@ namespace NYC311Dashboard.Services
             builder.CloseElement();
         };
 
-        public RenderFragment RenderCustomSidebar<TItem>(
+        public RenderFragment RenderCheckboxDropdown<TItem>(
             string label,
             IEnumerable<TItem> options,
             HashSet<TItem> selectedValues,
@@ -93,8 +94,43 @@ namespace NYC311Dashboard.Services
             catch
             {
                 _messagingService.ShowError(Resources.messaging_service_error_occurred);
-                //_messagingService.ShowError(Resources.messaging_service_error_occurred);
                 return CustomSidebar; // Result.Failure(Resources.messaging_service_error_occurred);
+            }
+            finally
+            {
+                _loadingService.IsLoading = false;
+            }
+        }
+
+        public RenderFragment RenderMultipleCheckboxDropdowns<TItem>(IEnumerable<CheckboxDropdownConfig<TItem>> configs)
+        {
+            _loadingService.IsLoading = true;
+            try
+            {
+                RenderFragment customSidebar = builder =>
+                {
+                    int seq = 0;
+                    foreach (var config in configs)
+                    {
+                        builder.OpenComponent(seq++, typeof(CheckboxDropdown<TItem>));
+                        builder.AddAttribute(seq++, "Label", config.Label);
+                        builder.AddAttribute(seq++, "Options", config.Options);
+                        builder.AddAttribute(seq++, "SelectedValues", config.SelectedValues);
+                        builder.AddAttribute(seq++, "SelectedValuesChanged", config.SelectedValuesChanged);
+                        builder.AddAttribute(seq++, "OnSelectionChanged", config.OnSelectionChanged);
+                        builder.AddAttribute(seq++, "OptionLabel", config.OptionLabel ?? (x => x?.ToString()));
+                        builder.AddAttribute(seq++, "SetIndeterminateSelection", SetIndeterminate);
+                        builder.CloseComponent();
+                    }
+                };
+
+                CustomSidebar = customSidebar;
+                return customSidebar;
+            }
+            catch
+            {
+                _messagingService.ShowError(Resources.messaging_service_error_occurred);
+                return CustomSidebar;
             }
             finally
             {
@@ -145,5 +181,7 @@ namespace NYC311Dashboard.Services
         {
             _navigation.LocationChanged -= OnNavigationChanged;
         }
+
+
     }
 }
