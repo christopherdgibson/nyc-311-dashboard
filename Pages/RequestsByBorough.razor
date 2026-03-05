@@ -31,14 +31,14 @@
     private List<RequestModel> requests = new List<RequestModel>();
     private List<BoroughDateTableRow> requestsByBorough = new List<BoroughDateTableRow>();
     private List<string> boroughs = new();
-    private HashSet<string> selectedBoroughs = new();
-    private ChartOptions chartOptions = new();
+    private HashSet<string>? selectedBoroughs = new();
+    private ChartOptions? chartOptions = new();
 
     //private DotNetObjectReference<RequestsByBorough>? dotNetRef;
 
     private bool chartNeedsRefresh = false;
 
-    private bool ShowChart => requestsByBorough != null && requestsByBorough.Any() && selectedBoroughs.Any();
+    private bool ShowChart => requestsByBorough != null && requestsByBorough.Any() && selectedBoroughs!= null && selectedBoroughs.Any();
 
     protected override void OnInitialized()
     {
@@ -68,13 +68,16 @@
         boroughs = RequestService.Boroughs;
         selectedBoroughs = RequestService.SelectedBoroughs;
 
-        LayoutService.SetSidebar(LayoutService.RenderCheckboxDropdown(
-             Resources.label_select_boroughs,
-             boroughs,
-             selectedBoroughs,
-             EventCallback.Factory.Create<HashSet<string>>(this, v => selectedBoroughs = v),
-             OnBoroughSelectionChanged
-         ));
+        var configs =
+            new CheckboxDropdownConfig<string>(
+            Label: Resources.title_borough,
+            Options: boroughs,
+            SelectedValues: selectedBoroughs,
+            SelectedValuesChanged: EventCallback.Factory.Create<HashSet<string>>(this, v => selectedBoroughs = v),
+            OnSelectionChanged: OnBoroughSelectionChanged)
+        ;
+
+        LayoutService.SetSidebar(LayoutService.RenderCheckboxDropdown(configs, Resources.label_select_boroughs));
 
         chartNeedsRefresh = ShowChart;
     }

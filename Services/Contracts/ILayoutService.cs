@@ -22,16 +22,12 @@ namespace NYC311Dashboard.Services.Contracts
 
         RenderFragment RenderInactiveButton(string buttonText, string message);
 
-        RenderFragment RenderCheckboxDropdown<TItem>(
-            string label,
-            IEnumerable<TItem> options,
-            HashSet<TItem> selectedValues,
-            EventCallback<HashSet<TItem>> selectedValuesChanged,
-            Func<Task>? onSelectionChanged,
-            bool inactive = false,
-            Func<TItem, string>? optionLabel = null);
-
-        RenderFragment RenderMultipleCheckboxDropdowns<TItem>(IEnumerable<CheckboxDropdownConfig<TItem>> configs);
+        public RenderFragment RenderCheckboxDropdown<TItem>(CheckboxDropdownConfig<TItem> config, string header)
+        {
+            return RenderMultipleCheckboxDropdowns(new List<CheckboxDropdownConfig<TItem>> { config }, header);
+        }
+         
+        RenderFragment RenderMultipleCheckboxDropdowns<TItem>(IEnumerable<CheckboxDropdownConfig<TItem>> configs, string header);
 
         Task ScrollToTop();
 

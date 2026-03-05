@@ -313,6 +313,24 @@ h1 {
         color: var(--theme-main-color);
     }
 
+.sidebar-section-header {
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    padding: 0.5rem 0.25rem 0.25rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.sidebar-dropdown-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem; /* uniform spacing between all dropdowns */
+}
+
 /* ────────────────────────── Home page styles ────────────────────────── */
 
 .home-page-container {

@@ -61,55 +61,39 @@ namespace NYC311Dashboard.Services
             builder.CloseElement();
         };
 
-        public RenderFragment RenderCheckboxDropdown<TItem>(
-            string label,
-            IEnumerable<TItem> options,
-            HashSet<TItem> selectedValues,
-            EventCallback<HashSet<TItem>> selectedValuesChanged,
-            Func<Task>? onSelectionChanged,
-            bool inactive = false,
-            Func<TItem, string>? optionLabel = null)
+        public RenderFragment RenderCheckboxDropdown<TItem>(CheckboxDropdownConfig<TItem> config, string header)
         {
-            _loadingService.LoadingMessage = Resources.loading_service_loading_here;
-            _loadingService.IsLoading = true;
-            try
-            {
-                RenderFragment? customSidebar = builder =>
-                {
-                    builder.OpenComponent(0, typeof(CheckboxDropdown<TItem>));
-                    builder.AddAttribute(1, "Label", label);
-                    builder.AddAttribute(2, "Options", options);
-                    builder.AddAttribute(3, "SelectedValues", selectedValues);
-                    builder.AddAttribute(4, "SelectedValuesChanged", selectedValuesChanged);
-                    builder.AddAttribute(5, "OnSelectionChanged", onSelectionChanged);
-                    builder.AddAttribute(6, "OptionLabel", optionLabel ?? (x => x?.ToString()));
-                    builder.AddAttribute(7, "SetIndeterminateSelection", SetIndeterminate);
-                    builder.CloseComponent();
-                };
-
-                CustomSidebar = customSidebar;
-
-                return customSidebar;
-            }
-            catch
-            {
-                _messagingService.ShowError(Resources.messaging_service_error_occurred);
-                return CustomSidebar; // Result.Failure(Resources.messaging_service_error_occurred);
-            }
-            finally
-            {
-                _loadingService.IsLoading = false;
-            }
+            return RenderMultipleCheckboxDropdowns(new List<CheckboxDropdownConfig<TItem>> { config }, header);
         }
 
-        public RenderFragment RenderMultipleCheckboxDropdowns<TItem>(IEnumerable<CheckboxDropdownConfig<TItem>> configs)
+        public RenderFragment RenderMultipleCheckboxDropdowns<TItem>(IEnumerable<CheckboxDropdownConfig<TItem>> configs, string header)
         {
             _loadingService.IsLoading = true;
             try
             {
+                if (configs is null)
+                {
+                    throw new ArgumentNullException(nameof(configs));
+                }
+                if (!configs.Any())
+                {
+                    return builder => { }; // silent fallback, already handled upstream
+                }
+
                 RenderFragment customSidebar = builder =>
                 {
                     int seq = 0;
+
+                    // header div
+                    builder.OpenElement(seq++, "div");
+                    builder.AddAttribute(seq++, "class", "sidebar-section-header");
+                    builder.AddContent(seq++, header);
+                    builder.CloseElement();
+
+                    // dropdown stack wrapper
+                    builder.OpenElement(seq++, "div");
+                    builder.AddAttribute(seq++, "class", "sidebar-dropdown-stack");
+
                     foreach (var config in configs)
                     {
                         builder.OpenComponent(seq++, typeof(CheckboxDropdown<TItem>));
@@ -122,6 +106,8 @@ namespace NYC311Dashboard.Services
                         builder.AddAttribute(seq++, "SetIndeterminateSelection", SetIndeterminate);
                         builder.CloseComponent();
                     }
+
+                    builder.CloseElement(); // close sidebar-dropdown-stack
                 };
 
                 CustomSidebar = customSidebar;

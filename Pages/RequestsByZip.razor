@@ -39,7 +39,7 @@
     private Dictionary<string, HashSet<string>> selectedZipCodesByBorough = new();
 
     private bool chartNeedsRefresh = false;
-    private bool ShowChart => requestsByZipHour != null && requestsByZipHour.Count != 0 && selectedZipCodes.Any();
+    private bool ShowChart => requestsByZipHour != null && requestsByZipHour.Count != 0 && selectedZipCodes != null && selectedZipCodes.Any();
 
     protected override void OnInitialized()
     {
@@ -100,7 +100,7 @@
             OnSelectionChanged: OnZipSelectionChanged
         ));
 
-        LayoutService.SetSidebar(LayoutService.RenderMultipleCheckboxDropdowns(configs));
+        LayoutService.SetSidebar(LayoutService.RenderMultipleCheckboxDropdowns(configs, Resources.label_select_zip_codes));
 
         chartNeedsRefresh = ShowChart;
     }
