@@ -1,10 +1,10 @@
 ﻿@if (IsVisible)
 {
-    <div class="modal-backdrop" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:1050;">
-        <div class="modal-dialog" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1060;min-width:300px;">
-            <div class="modal-content" style="padding:1.5rem;">
-                <div class="modal-header @(isError ? "bg-danger text-white" : "")">
-                    <h5 class="modal-title">@Title</h5>
+    <div class="modal-backdrop app-modal-backdrop">
+        <div class="modal-dialog app-modal-dialog">
+            <div class="modal-content app-modal-content @(isError ? "danger" : "")">
+                <div class="modal-header">
+                    <h4 class="modal-title">@Title</h4>
                 </div>
                 <div class="modal-body">
                     @Message
@@ -12,12 +12,12 @@
                 <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:1rem;">
                     @if (isError)
                     {
-                        <button class="btn btn-danger" @onclick="OnCancelClicked">Dismiss</button>
+                        <button class="btn-dialog btn-error" @onclick="OnCancelClicked">Dismiss</button>
                     }
                     else
                     {
-                        <button class="btn btn-secondary" @onclick="OnCancelClicked">Cancel</button>
-                        <button class="btn btn-primary" @onclick="OnConfirmClicked">Confirm</button>
+                        <button class="btn-dialog btn-secondary" @onclick="OnCancelClicked">Cancel</button>
+                        <button class="btn-dialog btn-confirm" @onclick="OnConfirmClicked">Confirm</button>
                     }
                 </div>
             </div>

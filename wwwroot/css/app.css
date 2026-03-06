@@ -19,6 +19,7 @@
     --btn-pageview-bg-color: var(--theme-main-color);
     --btn-sidebar-text-color: var(--theme-main-color);
     --btn-sidebar-bg-color: var(--theme-accent-color);
+    --btn-danger_color: #A00020;
     --btn-hover-color: #0056b3;
 }
 
@@ -195,6 +196,82 @@ h1 {
     gap: 10px;
 }
 
+/* ─── Dialog messages ─── */
+
+.app-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 1050;
+}
+
+.app-modal-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1060;
+    width: clamp(300px, 50vw, 400px);
+}
+
+.app-modal-content {
+    padding: 1.5rem;
+}
+
+    .app-modal-content .modal-body {
+        border-top: 1.5px solid var(--theme-main-color);
+        border-bottom: 1.5px solid var(--theme-main-color);
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .app-modal-content.danger .modal-body {
+        border-top-color: var(--btn-danger_color) !important;
+        border-bottom-color: var(--btn-danger_color) !important;
+    }
+
+    .app-modal-content .modal-header {
+        border-bottom: none; /* borders moved to modal-body */
+    }
+
+    .app-modal-content .modal-footer {
+        border-top: none; /* borders moved to modal-body */
+    }
+
+    .app-modal-content.danger .modal-title {
+        color: var(--btn-danger_color);
+    }
+
+.btn-dialog {
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    width: 125px;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    transition: 0.2s ease;
+}
+
+.btn-confirm {
+    color: white;
+    background-color: var(--theme-main-color);
+}
+
+    .btn-confirm:hover {
+        color: var(--theme-main-color);
+        background-color: var(--theme-accent-color);
+    }
+
+.btn-error {
+    color: white;
+    background-color: var(--btn-danger_color);
+}
+
 /* ────────────────────────── Sidebar styles ────────────────────────── */
 
 .sidebar-header {
@@ -309,7 +386,7 @@ h1 {
 }
 
     .sidebar-btn:hover {
-        background-color: var(--theme-accent-color); /* yellow, readable on white→yellow with blue text */
+        background-color: var(--theme-accent-color);
         color: var(--theme-main-color);
     }
 
