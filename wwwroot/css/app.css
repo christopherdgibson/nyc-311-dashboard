@@ -214,7 +214,7 @@ h1 {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1060;
-    width: clamp(300px, 50vw, 400px);
+    width: clamp(300px, 50vw, 450px);
 }
 
 .app-modal-content {
