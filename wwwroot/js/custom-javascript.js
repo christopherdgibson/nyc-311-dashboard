@@ -142,46 +142,54 @@ window.renderApexChart = function (elementSelector, dataset, options) {
             width: options.width
         },
         series: dataset.series,
-        dataLabels: {
+        xaxis: {
+            categories: dataset.categories
+        }
+    };
+
+    if (options.dataLabels) {
+        chartOptions.dataLabels = {
             enabled: options.dataLabels.enabled,
             formatter: function (val, { seriesIndex }) {
-                const fmt = options.dataLabels.seriesFormatters?.[seriesIndex];
-                return applyFormatter(fmt, val);
+                return applyFormatter(options.dataLabels.seriesFormatters?.[seriesIndex], val);
             },
             offsetY: options.dataLabels.offsetY,
             style: {
                 fontSize: options.dataLabels.style.fontSize,
                 colors: options.dataLabels.style.colors
             }
-        },
-        plotOptions: {
+        };
+    }
+
+    if (options.plotOptions) {
+        chartOptions.plotOptions = {
             bar: {
                 borderRadius: options.plotOptions.bar.borderRadius,
-                dataLabels: {
-                    position: options.plotOptions.bar.dataLabelsPosition,
-                }
+                dataLabels: { position: options.plotOptions.bar.dataLabelsPosition }
             }
-        },
-        tooltip: {
+        };
+    }
+
+    if (options.tooltip) {
+        chartOptions.tooltip = {
             enabled: options.tooltip.enabled,
             y: {
                 formatter: function (val, { seriesIndex }) {
-                    const fmt = options.tooltip.seriesFormatters?.[seriesIndex];
-                    return applyFormatter(fmt, val);
+                    return applyFormatter(options.tooltip.seriesFormatters?.[seriesIndex], val);
                 }
             }
-        },
-        yaxis: {
+        };
+    }
+
+    if (options.yaxis) {
+        chartOptions.yaxis = {
             labels: {
                 formatter: function (val) {
                     return applyFormatter(options.yaxis.labelsFormatter, val);
                 }
             }
-        },
-        xaxis: {
-            categories: dataset.categories
-        }
-    };
+        };
+    }
 
     window.chartInstances = window.chartInstances || {};
 

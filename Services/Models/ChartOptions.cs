@@ -57,7 +57,7 @@ namespace NYC311Dashboard.Services.Models
         public int BorderRadius { get; set; } = 1;
 
         [JsonPropertyName("dataLabelsPosition")]
-        public string DataLabelsPosition { get; set; } = "top";
+        public string? DataLabelsPosition { get; set; } = "top";
     }
 
     public class Chart
@@ -75,7 +75,7 @@ namespace NYC311Dashboard.Services.Models
     public class DataLabels
     {
         [JsonPropertyName("enabled")]
-        public bool Enabled { get; set; } = true;
+        public bool Enabled { get; set; } = false;
 
         [JsonPropertyName("seriesFormatters")]
         public List<string> SeriesFormatters { get; set; } = new() { "integer", "decimal:2" };

@@ -15,8 +15,7 @@ namespace NYC311Dashboard.Services
         private readonly IMessagingService _messagingService;
         public ChartOptions? BarChartByBorough { get; private set; }
         public ChartOptions? LineChartByZipHour { get; private set; }
-
-        public ChartOptions? ChartByPrecinct{ get; private set; }
+        public ChartOptions? ChartByPrecinct { get; private set; }
 
         public ChartService(IJSRuntime js, IRequestService requestService, ILoadingService loadingService, IMessagingService messagingService)
         {
@@ -77,6 +76,23 @@ namespace NYC311Dashboard.Services
                     var result = GetChartOptions(Resources.groupby_category_boroughs, height: "380");
 
                     options = result.IsSuccess ? result.Value : BarChartByBorough;
+
+                    if (options == null)
+                    {
+                        _messagingService.ShowError(Resources.failed_chart_options);
+                        return;
+                    }
+                    else if (options.DataLabels == null)
+                    {
+                        options.DataLabels = new DataLabels
+                        {
+                            Enabled = true
+                        };
+                    }
+                    else
+                    {
+                        options.DataLabels.Enabled = true;
+                    }
                 }
 
                 BarChartByBorough = options;
@@ -147,10 +163,15 @@ namespace NYC311Dashboard.Services
                     var result = GetChartOptions(Resources.groupby_category_zip_codes, height: "380");
 
                     options = result.IsSuccess ? result.Value : LineChartByZipHour;
+
+                    if (options == null)
+                    {
+                        _messagingService.ShowError(Resources.failed_chart_options);
+                        return;
+                    }
                 }
 
                 LineChartByZipHour = options;
-
 
                 var error = await _js.InvokeAsync<string?>("renderApexChartMulti", elementSelector, dataset, options);
                 if (error != null)
@@ -190,25 +211,25 @@ namespace NYC311Dashboard.Services
                         return;
                     }
 
-                dataGroups = _requestService.SelectedBoroughs
-                    .OrderBy(b => b)
-                    .Select(borough =>
-                    {
-                        var boroughPrecincts = _requestService.SelectedPrecincts
-                            .Where(p => _requestService.RequestsByPrecinct
-                                .Any(r => r.Precinct.Equals(p, StringComparison.OrdinalIgnoreCase)
-                                       && r.Borough.Equals(borough, StringComparison.OrdinalIgnoreCase)))
-                            .OrderBy(p => p)
-                            .ToList();
-
-                        return new ApexDataGroup
+                    dataGroups = _requestService.SelectedBoroughs
+                        .OrderBy(b => b)
+                        .Select(borough =>
                         {
-                            GroupKey = borough,
-                            Dataset = new ApexDataSet
+                            var boroughPrecincts = _requestService.SelectedPrecincts
+                                .Where(p => _requestService.RequestsByPrecinct
+                                    .Any(r => r.Precinct.Equals(p, StringComparison.OrdinalIgnoreCase)
+                                           && r.Borough.Equals(borough, StringComparison.OrdinalIgnoreCase)))
+                                .OrderBy(p => p)
+                                .ToList();
+
+                            return new ApexDataGroup
                             {
-                                Categories = boroughPrecincts,
-                                Series = new List<ApexSeries>
+                                GroupKey = borough,
+                                Dataset = new ApexDataSet
                                 {
+                                    Categories = boroughPrecincts,
+                                    Series = new List<ApexSeries>
+                                    {
                                     new ApexSeries
                                     {
                                         Name = Resources.chart_name_total_count,
@@ -226,14 +247,20 @@ namespace NYC311Dashboard.Services
                                                 .Sum(r => r.Duration))
                                             .ToList()
                                     }
+                                    }
                                 }
-                            }
-                        };
-                    }).ToList();
+                            };
+                        }).ToList();
 
                     var result = GetChartOptions(Resources.groupby_category_precinct, height: "380");
 
                     options = result.IsSuccess ? result.Value : ChartByPrecinct;
+
+                    if (options == null)
+                    {
+                        _messagingService.ShowError(Resources.failed_chart_options);
+                        return;
+                    }
                 }
 
                 ChartByPrecinct = options;
@@ -242,9 +269,9 @@ namespace NYC311Dashboard.Services
 
                 foreach (var group in dataGroups)
                 {
-
+                    var divId = group.GroupKey == null ? elementSelector : string.Join("-", elementSelector, group.GroupKey.ToKebabCase());
                     var dataset = group.Dataset;
-                    var error = await _js.InvokeAsync<string?>("renderApexChart", elementSelector, dataset, options);
+                    var error = await _js.InvokeAsync<string?>("renderApexChart", divId, dataset, options);
                     if (error != null)
                     {
                         _messagingService.ShowError(error);

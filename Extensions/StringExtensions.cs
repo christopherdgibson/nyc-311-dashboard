@@ -21,15 +21,25 @@ namespace NYC311Dashboard.Extensions
                         ? "_" + x
                         : x.ToString().ToLower()));
 
-        public static string ToProperCase(this string input, string culture = "en-GB")
+        public static string ToProperCase(this string target, string culture = "en-GB")
         {
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(target))
             {
-                return input;
+                return target;
             }
 
             var textInfo = new CultureInfo(culture, false).TextInfo;
-            return textInfo.ToTitleCase(input.ToLower());
+            return textInfo.ToTitleCase(target.ToLower());
+        }
+
+        public static string ToKebabCase(this string target)
+        {
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                return target;
+            }
+
+            return Regex.Replace(target.ToLower(), @"\s+", "-");
         }
 
         public static string InsertNewlines(this string? target, int minWrapAtLength)

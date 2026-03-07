@@ -15,11 +15,16 @@
 
 <PageTitle>@Resources.title_precinct</PageTitle>
 
-@if (ShowChart)
+@if (RequestService.SelectedBoroughs?.Count > 0  && ShowChart)
 {
     <div class="content-block">
         <h2>@Resources.title_precinct_requests_chart</h2>
-        <div id="@SharedJsConstants.PrecinctChartId" class="apex-chart-flex-container"></div>
+        <div id="@SharedJsConstants.PrecinctChartId" class="table-flex-container">
+            @foreach(var borough in RequestService.SelectedBoroughs)
+            {
+                <div id="@(string.Join("-", SharedJsConstants.PrecinctChartId, borough.ToKebabCase()))" class="table-flex-item"></div>
+            }
+        </div>
         <hr class="section-divider" />
         <h2>@Resources.title_precinct_requests_table</h2>
         <div class="table-flex-container">
@@ -52,7 +57,7 @@
             return;
         }
 
-        if (!(RequestService.SelectedBoroughs?.Count > 0)) // selected boroughs check necessary for checkbox null error. Always the case?
+        if (!(RequestService.SelectedBoroughs?.Count > 0)) // selected boroughs check necessary for checkbox null error
         {
             LayoutService.SetSidebar(
                 LayoutService.RenderInactiveButton(Resources.data_none_available,
@@ -62,15 +67,6 @@
         }
 
         RefreshRequestsByPrecinct();
-
-        // if (RequestService.RequestsByPrecinct.Count == 0) // would need to also condition on borough selection changed to keep this but maybe not worth it
-        // {
-        //     await RefreshRequestsByPrecinct();
-        // }
-        // else
-        // {
-        //     RequestsByPrecinct = RequestService.RequestsByPrecinct;
-        // }
 
         selectedPrecincts = RequestService.SelectedPrecincts;
 
