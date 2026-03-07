@@ -197,8 +197,7 @@ namespace NYC311Dashboard.Services
             try
             {
                 var dataGroups = new List<ApexDataGroup>();
-                if (options == null)
-                {
+
                     if (!(_requestService.SelectedBoroughs?.Count > 0))
                     {
                         _messagingService.ShowError(string.Format(Resources.empty_selction, Resources.groupby_category_boroughs));
@@ -211,7 +210,7 @@ namespace NYC311Dashboard.Services
                         return;
                     }
 
-                    dataGroups = _requestService.SelectedBoroughs
+                dataGroups = _requestService.SelectedBoroughs
                         .OrderBy(b => b)
                         .Select(borough =>
                         {
@@ -252,15 +251,11 @@ namespace NYC311Dashboard.Services
                             };
                         }).ToList();
 
+                if (options == null)
+                {
                     var result = GetChartOptions(Resources.groupby_category_precinct, height: "380");
 
                     options = result.IsSuccess ? result.Value : ChartByPrecinct;
-
-                    if (options == null)
-                    {
-                        _messagingService.ShowError(Resources.failed_chart_options);
-                        return;
-                    }
                 }
 
                 ChartByPrecinct = options;
@@ -269,7 +264,7 @@ namespace NYC311Dashboard.Services
 
                 foreach (var group in dataGroups)
                 {
-                    var divId = group.GroupKey == null ? elementSelector : string.Join("-", elementSelector, group.GroupKey.ToKebabCase());
+                    var divId = string.IsNullOrEmpty(group.GroupKey) ? elementSelector : string.Join("-", elementSelector, group.GroupKey.ToKebabCase());
                     var dataset = group.Dataset;
                     var error = await _js.InvokeAsync<string?>("renderApexChart", divId, dataset, options);
                     if (error != null)
@@ -333,6 +328,12 @@ namespace NYC311Dashboard.Services
                 if (selection == Resources.groupby_category_zip_codes)
                 {
                     LineChartByZipHour = options;
+                }
+
+                if (options == null)
+                {
+                    _messagingService.ShowError(Resources.failed_chart_options);
+                    return Result.Failure<ChartOptions>(Resources.failed_chart_options);
                 }
 
                 //_messagingService.Clear();

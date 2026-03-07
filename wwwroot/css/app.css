@@ -196,6 +196,16 @@ h1 {
     gap: 10px;
 }
 
+.chart-flex-item {
+    flex: 0 1 calc(50% - 10px); /* Three per row with gap */
+    /*min-width: 350px;*/ /* Forces wrap on small screens */
+    /*max-width: 400px;*/
+    display: grid;
+    grid-template-rows: auto auto;
+    /*    text-align: center;*/
+    gap: 10px;
+}
+
 /* ─── Dialog messages ─── */
 
 .app-modal-backdrop {

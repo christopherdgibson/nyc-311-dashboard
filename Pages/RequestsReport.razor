@@ -17,7 +17,7 @@
 
 <PageTitle>@Resources.title_report</PageTitle>
 
-@if (ShowBoroughChart || ShowZipChart)
+@if (ShowBoroughChart || ShowZipChart || ShowPrecinctChart)
 {
     <div>
         @LayoutService.RenderButton(
@@ -28,7 +28,6 @@
     </div>
     <div class="pdf-page-area">
         <div id="pdf-content" class="pdf-print-area">
-
             <h2>
                 <span class="header-suptitle">@Resources.title_download</span>
                 <span class="header-main">@Resources.title_report</span>
@@ -43,21 +42,37 @@
                 @if (ShowZipChart)
                 {
                     <div id="@SharedJsConstants.ZipChartId" class="apex-chart-flex-container"></div>
+                }
 
-                    <h3>@Resources.title_borough_requests_table</h3>
-                    <div class="table-flex-container">
-                        <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
+                @if (ShowPrecinctChart)
+                {
+                    <h2>@Resources.title_precinct_requests_chart</h2>
+                    <div id="@SharedJsConstants.PrecinctChartId" class="table-flex-container">
+                        @foreach (var borough in selectedBoroughs)
+                        {
+                            <div id="@(string.Join("-", SharedJsConstants.PrecinctChartId, borough.ToKebabCase()))" class="chart-flex-item"></div>
+                        }
                     </div>
+                }
+
+                <h3>@Resources.title_borough_requests_table</h3>
+                <div class="table-flex-container">
+                    <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
+                </div>
+
+                @if (ShowZipChart)
+                {
                     <h3>@Resources.title_zip_requests_table</h3>
                     <div class="table-flex-container">
                         <SortableTable Items="requestsByZipHour" Options=@zipHourOptions />
                     </div>
                 }
-                else
+
+                @if (ShowPrecinctChart)
                 {
-                    <h3>@Resources.title_borough_requests_table</h3>
+                    <h3>@Resources.title_precinct_requests_table</h3>
                     <div class="table-flex-container">
-                        <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
+                        <SortableTable Items="requestsByPrecinct" Options=@precinctOptions />
                     </div>
                 }
             }
@@ -68,25 +83,30 @@
 @code {
     private List<BoroughDateTableRow> requestsByBoroughDate = new List<BoroughDateTableRow>();
     private List<ZipHourTableRow> requestsByZipHour = new List<ZipHourTableRow>();
+    private List<PrecinctTableRow> requestsByPrecinct = new List<PrecinctTableRow>();
     private HashSet<string>? selectedBoroughs = new();
     private HashSet<string>? selectedZipCodes = new();
+    private HashSet<string>? selectedPrecincts = new();
 
-    private bool zipChartNeedsRefresh = false;
     private bool boroughChartNeedsRefresh = false;
+    private bool zipChartNeedsRefresh = false;
+    private bool precinctChartNeedsRefresh = false;
 
-    private bool ShowBoroughChart => requestsByBoroughDate != null && requestsByBoroughDate.Count != 0 && selectedBoroughs?.Count > 0;
-    private bool ShowZipChart => requestsByZipHour != null && requestsByZipHour.Count != 0 && selectedZipCodes?.Count > 0;
+    private bool ShowBoroughChart => requestsByBoroughDate?.Count > 0 && selectedBoroughs?.Count > 0;
+    private bool ShowZipChart => requestsByZipHour?.Count > 0 && selectedZipCodes?.Count > 0;
+    private bool ShowPrecinctChart => requestsByPrecinct?.Count > 0 && selectedPrecincts?.Count > 0;
 
     private TableOptions<BoroughDateTableRow>? boroughDateOptions;
     private TableOptions<ZipHourTableRow>? zipHourOptions;
+    private TableOptions<PrecinctTableRow>? precinctOptions;
 
     protected override void OnInitialized()
     {
         LayoutService.SetTitle(Resources.report_page_title, Resources.title_requests);
         boroughDateOptions = RequestService.GetTableOptions<BoroughDateTableRow>(r => r.Borough);
         zipHourOptions = RequestService.GetTableOptions<ZipHourTableRow>(r => r.Borough);
+        precinctOptions = RequestService.GetTableOptions<PrecinctTableRow>(r => r.Borough);
     }
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,9 +118,10 @@
             return;
         }
 
-        await RefreshRequestsByZipHour();
+        await RefreshRequests();
         selectedBoroughs = RequestService.SelectedBoroughs;
         selectedZipCodes = RequestService.SelectedZipCodes;
+        selectedPrecincts = RequestService.SelectedPrecincts;
 
         // if (!boroughChartOptions.HasData)
         // {
@@ -122,6 +143,7 @@
 
         boroughChartNeedsRefresh = ShowBoroughChart;
         zipChartNeedsRefresh = ShowZipChart;
+        precinctChartNeedsRefresh = ShowPrecinctChart;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -129,22 +151,25 @@
         if (boroughChartNeedsRefresh)
         {
             boroughChartNeedsRefresh = false;
-            await ChartService.RenderBarChart($"#{SharedJsConstants.BoroughChartId}", ChartService.BarChartByBorough);  // only one error displays; consider errorList
+            await ChartService.RenderBarChart($"#{SharedJsConstants.BoroughChartId}");  // only one error displays; consider errorList
         }
 
         if (zipChartNeedsRefresh)
         {
             zipChartNeedsRefresh = false;
-            await ChartService.RenderLineChart($"#{SharedJsConstants.ZipChartId}", ChartService.LineChartByZipHour);
+            await ChartService.RenderLineChart($"#{SharedJsConstants.ZipChartId}");
         }
 
+        Console.WriteLine($"precinctChartNeedsRefresh: {precinctChartNeedsRefresh}");
+        if (precinctChartNeedsRefresh)
+        {
+            precinctChartNeedsRefresh = false;
+            await ChartService.RenderPrecinctChart($"#{SharedJsConstants.PrecinctChartId}");
+        }
     }   
 
-    protected async Task RefreshRequestsByZipHour()
+    protected Task RefreshRequests()
     {
-        requestsByBoroughDate.Clear();
-        requestsByZipHour.Clear();
-
         var resultBorough = RequestService.GenerateTableByBoroughDay();
         if (resultBorough.IsSuccess)
         {
@@ -156,12 +181,18 @@
         {
             requestsByZipHour = RequestService.RequestsByZipHour;
         }
+        var resultPrecinct = RequestService.GenerateTableByPrecinct();
+        Console.WriteLine($"resultPrecinct.IsSuccess: {resultPrecinct.IsSuccess}");
+        if (resultPrecinct.IsSuccess)
+        {
+            requestsByPrecinct = RequestService.RequestsByPrecinct;
+        }
 
         // if (resultBorough.IsFailure || resultZip.IsFailure) // should this access messagingService? Decide when consolidating errors
         // {
         //     _messagingService
         // }
-
+        return Task.CompletedTask;
     }
 
     private async Task SaveAsPdf()

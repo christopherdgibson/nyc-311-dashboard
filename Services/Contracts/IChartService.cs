@@ -7,6 +7,7 @@ namespace NYC311Dashboard.Services.Contracts
     {
         ChartOptions? BarChartByBorough { get; }
         ChartOptions? LineChartByZipHour { get; }
+        ChartOptions? ChartByPrecinct { get; }
 
         Result<ChartOptions> GetChartOptions(string selection, string? width = null, string? height = null);
 
