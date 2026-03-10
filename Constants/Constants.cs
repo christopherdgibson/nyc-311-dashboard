@@ -1,5 +1,13 @@
 ﻿namespace NYC311Dashboard.Constants
 {
+    public class UIConstants
+    {
+        public const string DateFormat = "MM/dd/yyyy";
+        public const string DateTimeFormat = "MM/dd/yyyy HH:mm:ss";
+        public const string TimeFormat = "HH:mm:ss";
+        public const int MaxTextLength = 100;
+    }
+
     public class UrlConstants
     {
         public const string NYCOpenData311 = "https://data.cityofnewyork.us/Social-Services/NYC-311-Data/jrb2-thup/about_data";

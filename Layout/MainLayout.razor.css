@@ -43,14 +43,24 @@ main {
     right: 20px;
     z-index: 10;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     font-size: 40px;
     justify-content: center;
     align-items: center;
-    background: none;
+    background: var(--theme-main-color);
     border: none;
 }
+
+    .scroll-to-top-btn i {
+        color: white;
+    }
+
+    .scroll-to-top-btn:hover {
+        background: var(--theme-accent-color);
+    }
+
+
 
 /* ────────────────────────── Mobile styles ────────────────────────── */
 
@@ -95,22 +105,6 @@ main {
     .sidebar-btn {
         width: fit-content;
         padding: 10px;
-    }*/
-
-/*    .scroll-to-top-btn {
-        display: flex;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 40px;
-        justify-content: center;
-        align-items: center;
-        background: none;
-        border: none;
     }*/
 
 /*    .nav-expand-menu {
