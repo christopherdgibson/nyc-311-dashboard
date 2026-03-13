@@ -20,7 +20,9 @@
 {
     <div class="content-block">
         <h2>@Resources.title_borough_requests_chart</h2>
-        <div id="@SharedJsConstants.BoroughChartId" class="apex-chart-container pageview-block"></div>
+        <div class="apex-chart-container chart-flex-container pageview-block">
+            <div id="@SharedJsConstants.BoroughChartId" class="chart-flex-item"></div>
+        </div>
         <hr class="section-divider" />
         <h2>@Resources.title_borough_requests_table</h2>
         <div class="table-flex-container pageview-block">
