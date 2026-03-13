@@ -105,7 +105,13 @@ window.renderApexChart = function (elementSelector, dataset, options) {
         },
         series: dataset.series,
         xaxis: {
-            categories: dataset.categories
+            categories: dataset.categories,
+            labels: {
+                rotate: options.xaxis.labels.rotate,
+                hideOverlappingLabels: options.xaxis.labels.hideOverlappingLabels,
+                trim: options.xaxis.labels.trim,
+                maxHeight: options.xaxis.labels.maxHeight
+            }
         }
     };
 

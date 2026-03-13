@@ -16,6 +16,9 @@ namespace NYC311Dashboard.Services.Models
         [JsonPropertyName("tooltip")]
         public Tooltip? Tooltip { get; set; } = new Tooltip();
 
+        [JsonPropertyName("xaxis")]
+        public XAxis XAxis { get; set; } = new XAxis();
+
         [JsonPropertyName("yaxis")]
         public YAxis YAxis { get; set; } = new YAxis();
 
@@ -118,6 +121,27 @@ namespace NYC311Dashboard.Services.Models
 
         [JsonPropertyName("seriesFormatters")]
         public SeriesFormatterOptions SeriesFormatters { get; set; } = new();
+    }
+
+    public class XAxis
+    {
+        [JsonPropertyName("labels")]
+        public XAxisLabels Labels { get; set; } = new();
+    }
+
+    public class XAxisLabels
+    {
+        [JsonPropertyName("rotate")]
+        public int Rotate { get; set; } = 0;
+
+        [JsonPropertyName("hideOverlappingLabels")]
+        public bool HideOverlappingLabels { get; set; } = true;
+
+        [JsonPropertyName("trim")]
+        public bool Trim { get; set; } = true;
+
+        [JsonPropertyName("maxHeight")]
+        public int MaxHeight { get; set; } = 40;
     }
 
     public class YAxis
