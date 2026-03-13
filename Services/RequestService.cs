@@ -7,6 +7,7 @@ using NYC311Dashboard.Models;
 using NYC311Dashboard.Services.Contracts;
 using NYC311Dashboard.Services.Models;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 
 namespace NYC311Dashboard.Services
@@ -19,7 +20,7 @@ namespace NYC311Dashboard.Services
         //private readonly string baseUrl = UrlConstants.BaseUrl;
         private readonly string sampleUrl = UrlConstants.SampleUrl;
         private readonly string sampleUrlAbbr = UrlConstants.SampleUrlAbbr;
-        public List<RequestModel> Requests { get; private set; } = new();
+        public List<RequestTableRow> Requests { get; private set; } = new();
 
         public List<string> Boroughs { get; private set; } = new();
 
@@ -57,7 +58,7 @@ namespace NYC311Dashboard.Services
                     return;
                 }
 
-                Requests = result.Value.Where(r => r.Status.Equals(Resources.request_status_closed, StringComparison.OrdinalIgnoreCase)).ToList();
+                Requests = result.Value.Select(MapInputToTableRow).Where(r => r.Status.Equals(Resources.request_status_closed, StringComparison.OrdinalIgnoreCase)).ToList();
 
                 Boroughs = Requests
                 .Where(r => !string.IsNullOrWhiteSpace(r.Borough) && !r.Borough.Equals(Resources.borough_unspecified, StringComparison.OrdinalIgnoreCase))
@@ -84,8 +85,7 @@ namespace NYC311Dashboard.Services
             var tableRow = ModelMapper.Map<RequestModel, RequestTableRow>(input, (src, tgt) =>
             {
                 tgt.Borough = src.Borough.ToProperCase();
-                tgt.PolicePrecinct = src.PolicePrecinct.Replace("Precinct", "").Trim();
-                //tgt.PolicePrecinct = src.RawDate.ToDateTime();
+                tgt.PolicePrecinct = Regex.Match(src.PolicePrecinct, @"\d+").Value;
                 // any other manipulations
             });
 

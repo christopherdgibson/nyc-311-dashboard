@@ -7,7 +7,7 @@ namespace NYC311Dashboard.Services.Contracts
 {
     public interface IRequestService
     {
-        List<RequestModel> Requests { get; }
+        List<RequestTableRow> Requests { get; }
 
         List<string> Boroughs { get; }
 
