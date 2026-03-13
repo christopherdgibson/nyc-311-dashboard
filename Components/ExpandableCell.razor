@@ -7,13 +7,9 @@
     private string? DisplayText => expanded ? Text : Text?.Substring(0, MaxLength) + "...";
 }
 
-<div style="display: flex; align-items: flex-start;">
+<button class="expand-cell-btn" @onclick="() => expanded = !expanded">
     <div style="flex: 1;">
         @DisplayText
     </div>
-    <button class="expand-btn menu-icon-btn"
-            @onclick="() => expanded = !expanded"
-            style="border:none;background:none;padding:0;margin-left:8px;">
-        <i class="bi @(expanded ? "bi-chevron-up" : "bi-chevron-down")"></i>
-    </button>
-</div>
+    <i class="bi @(expanded ? "bi-chevron-up" : "bi-chevron-down") menu-icon-btn"></i>
+</button>

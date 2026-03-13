@@ -236,6 +236,19 @@ h1 {
     gap: 10px;
 }
 
+/*.chart-flex-item {
+    min-height: 380px;
+}
+
+    .chart-flex-item > div {*/ /* the apex chart div */
+        /*height: 380px !important;
+    }
+
+#chart-zip {
+    min-width: 400px;
+    min-height: 380px !important;
+}*/
+
 /* ─── Dialog messages ─── */
 
 .app-modal-backdrop {
@@ -841,28 +854,22 @@ h1 {
         color: var(--btn-hover-color)
     }
 
-
-.expand-btn .bi-chevron-down {
-    color: var(--btn-primary-blue);
-    transition: color 0.2s;
+.expand-cell-btn {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
 }
 
-.expand-btn:hover .bi-chevron-down {
-    color: var(--btn-hover-color)
-    /* Swap icon to filled version? */
-}
-
-.expand-btn .hover-icon {
-    display: none;
-}
-
-.expand-btn:hover .default-icon {
-    display: none;
-}
-
-.expand-btn:hover .hover-icon {
-    display: inline;
-}
+    .expand-cell-btn:hover .menu-icon-btn {
+        color: var(--btn-hover-color)
+    }
 
 /* ────────────────────────── Checkbox dropdown styles ────────────────────────── */
 
