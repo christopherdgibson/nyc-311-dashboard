@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="docs\screenshots\" />
     <Folder Include="Resources\" />
     <Folder Include="wwwroot\css\bootstrap\fonts\" />
     <Folder Include="wwwroot\images\" />

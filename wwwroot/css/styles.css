@@ -178,6 +178,11 @@ h1 {
 }
 
 @media (min-width:940px) {
+    .pdf-print-area .apex-chart-container,
+    .pdf-print-area .chart-flex-container {
+        width: 100%;
+    }
+
     .apex-chart-container, .chart-flex-container {
         width: 80%;
     }
@@ -1254,8 +1259,8 @@ nav {
 .pdf-print-area {
     width: 190mm;
     min-height: 220mm;
-    margin: 0 auto;
-    padding: 0; /* let html2pdf handle margins */
+    margin: 5 auto;
+    padding: 5; /* let html2pdf handle margins */
     background: #fff;
     box-sizing: border-box;
 }
@@ -1265,7 +1270,8 @@ nav {
     .pdf-print-area h2,
     .pdf-print-area h3,
     .pdf-print-area h4,
-    .pdf-print-area .table-flex-item {
+    .pdf-print-area .table-flex-item,
+    .pdf-print-area .chart-flex-item {
         break-inside: avoid;
         page-break-inside: avoid; /* keep as fallback */
     }

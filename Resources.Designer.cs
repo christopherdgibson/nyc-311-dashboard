@@ -476,7 +476,7 @@ namespace NYC311Dashboard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requests by selected boroughs.
+        ///   Looks up a localized string similar to Requests by precinct for selected boroughs.
         /// </summary>
         public static string title_precinct_requests_chart {
             get {

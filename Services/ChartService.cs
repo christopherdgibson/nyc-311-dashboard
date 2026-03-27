@@ -75,19 +75,26 @@ namespace NYC311Dashboard.Services
 
                     var result = GetChartOptions(Resources.groupby_category_boroughs, height: "380");
 
-                    options = result.IsSuccess ? result.Value : BarChartByBorough;
+                    if (result.IsSuccess)
+                    {
+                        options = result.Value;
+                        options.XAxis ??= new XAxis(); // include label options for bar chart
+                        options.DataLabels ??= new DataLabels();
+                        options.DataLabels.Enabled = true; // include labels for bar chart
+
+                        BarChartByBorough = options;
+                    }
+                    else
+                    {
+                        options = BarChartByBorough;
+                    }
 
                     if (options == null)
                     {
                         _messagingService.ShowError(Resources.failed_chart_options);
                         return;
                     }
-
-                    options.DataLabels ??= new DataLabels();
-                    options.DataLabels.Enabled = true;
                 }
-
-                BarChartByBorough = options;
 
                 var error = await _js.InvokeAsync<string?>("renderApexChart", elementSelector, dataset, options);
                 if (error != null)
@@ -154,19 +161,32 @@ namespace NYC311Dashboard.Services
 
                     var result = GetChartOptions(Resources.groupby_category_zip_codes, height: "380");
 
-                    options = result.IsSuccess ? result.Value : LineChartByZipHour;
+                    if (result.IsSuccess)
+                    {
+                        options = result.Value;
+                        options.Tooltip ??= new Tooltip();
+                        options.Tooltip.SeriesFormatters.Formatters = null;
+                        options.XAxis = new XAxis
+                        {
+                            Labels= new XAxisLabels
+                            {
+                                Trim = false // do not truncate labels for line chart
+                            }
+                        };
+
+                        LineChartByZipHour = options;
+                    }
+                    else
+                    {
+                        options = LineChartByZipHour;
+                    }
 
                     if (options == null)
                     {
                         _messagingService.ShowError(Resources.failed_chart_options);
                         return;
                     }
-
-                    options.Tooltip ??= new Tooltip();
-                    options.Tooltip.SeriesFormatters.Formatters = null;
                 }
-
-                LineChartByZipHour = options;
 
                 var error = await _js.InvokeAsync<string?>("renderApexChart", elementSelector, dataset, options);
                 if (error != null)
@@ -312,7 +332,7 @@ namespace NYC311Dashboard.Services
                     }
                 };
 
-                if (selection == Resources.groupby_category_boroughs)
+                if (selection == Resources.groupby_category_boroughs) // todo: should set these in calling method?
                 {
                     BarChartByBorough = options;
                 }

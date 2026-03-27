@@ -247,7 +247,7 @@
 		<value>Zip Code</value>
 	</data>
 	<data name="title_precinct_requests_chart" xml:space="preserve">
-		<value>Requests by selected boroughs</value>
+		<value>Requests by precinct for selected boroughs</value>
 	</data>
 	<data name="title_precinct_requests_table" xml:space="preserve">
 		<value>Total requests per borough for selected precincts</value>

@@ -105,15 +105,18 @@ window.renderApexChart = function (elementSelector, dataset, options) {
         },
         series: dataset.series,
         xaxis: {
-            categories: dataset.categories,
-            labels: {
-                rotate: options.xaxis.labels.rotate,
-                hideOverlappingLabels: options.xaxis.labels.hideOverlappingLabels,
-                trim: options.xaxis.labels.trim,
-                maxHeight: options.xaxis.labels.maxHeight
-            }
+            categories: dataset.categories
         }
     };
+
+    if (options.xaxis) {
+        chartOptions.xaxis.labels = {
+            rotate: options.xaxis.labels.rotate,
+            hideOverlappingLabels: options.xaxis.labels.hideOverlappingLabels,
+            trim: options.xaxis.labels.trim,
+            maxHeight: options.xaxis.labels.maxHeight
+        };
+    }
 
     if (options.dataLabels) {
         chartOptions.dataLabels = {

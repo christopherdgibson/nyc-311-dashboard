@@ -17,7 +17,7 @@ namespace NYC311Dashboard.Services.Models
         public Tooltip? Tooltip { get; set; } = new Tooltip();
 
         [JsonPropertyName("xaxis")]
-        public XAxis XAxis { get; set; } = new XAxis();
+        public XAxis? XAxis { get; set; }
 
         [JsonPropertyName("yaxis")]
         public YAxis YAxis { get; set; } = new YAxis();
