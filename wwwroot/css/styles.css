@@ -235,7 +235,7 @@ h1 {
     }
 
 .chart-flex-item {
-    flex: 1 1 350px;
+    flex: 1 1 320px;
     display: grid;
     grid-template-rows: auto auto;
     gap: 10px;
@@ -280,9 +280,9 @@ h1 {
 }
 
     .app-modal-content .modal-body {
-        border-top: 1.5px solid var(--theme-main-color);
-        border-bottom: 1.5px solid var(--theme-main-color);
-        padding: 1rem 1.5rem;
+        border-top: 2px solid var(--theme-main-color);
+        border-bottom: 2px solid var(--theme-main-color);
+        padding: 1.5rem 1.5rem;
         margin: 1rem 0;
     }
 
@@ -293,21 +293,31 @@ h1 {
 
     .app-modal-content .modal-header {
         border-bottom: none; /* borders moved to modal-body */
+        padding: 0.75rem 0;
     }
 
-    .app-modal-content .modal-footer {
+    .app-modal-footer {
+        display: flex;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding: 1rem 0;
         border-top: none; /* borders moved to modal-body */
+        border-bottom-right-radius: calc(.3rem - 1px);
+        border-bottom-left-radius: calc(.3rem - 1px);
     }
 
     .app-modal-content.danger .modal-title {
         color: var(--btn-danger_color);
     }
 
-    .app-modal-content .app-modal-footer {
+/*    .app-modal-content .app-modal-footer {
         display: flex;
         justify-content: flex-end;
         gap: 1rem;
-    }
+    }*/
 
 .btn-dialog {
     font-size: clamp(0.75rem, 1.5vw, 1rem);
@@ -1259,8 +1269,8 @@ nav {
 .pdf-print-area {
     width: 190mm;
     min-height: 220mm;
-    margin: 5 auto;
-    padding: 5; /* let html2pdf handle margins */
+    margin: 5px auto;
+    padding: 5px; /* let html2pdf handle margins */
     background: #fff;
     box-sizing: border-box;
 }
@@ -1270,15 +1280,21 @@ nav {
     .pdf-print-area h2,
     .pdf-print-area h3,
     .pdf-print-area h4,
+    .pdf-print-area .report-container,
     .pdf-print-area .table-flex-item,
     .pdf-print-area .chart-flex-item {
         break-inside: avoid;
         page-break-inside: avoid; /* keep as fallback */
     }
 
-    .pdf-print-area h4 {
+    .pdf-print-area h3 {
         page-break-after: avoid;
         break-after: avoid;
+    }
+
+    .pdf-print-area .report-container {
+        page-break-before: avoid;
+        break-before: avoid;
     }
 
     .pdf-print-area .fixed-width-table {

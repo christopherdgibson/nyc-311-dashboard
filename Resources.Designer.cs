@@ -350,15 +350,6 @@ namespace NYC311Dashboard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total requests for selected boroughs and zip codes.
-        /// </summary>
-        public static string report_boroughs_charts_title {
-            get {
-                return ResourceManager.GetString("report_boroughs_charts_title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This report shows New York City 311 requests for selected zip codes within the boroughs {0}.
         /// </summary>
         public static string report_boroughs_list_title {

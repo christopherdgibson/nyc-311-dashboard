@@ -36,42 +36,42 @@
 
             @if (ShowBoroughChart)
             {
-                <h3>@Resources.report_boroughs_charts_title</h3>
-                <div id="@SharedJsConstants.BoroughChartId" class="apex-chart-container"></div>
-
-                @if (ShowZipChart)
-                {
-                    <div id="@SharedJsConstants.ZipChartId" class="apex-chart-container"></div>
-                }
-
-                @if (ShowPrecinctChart)
-                {
-                    <div id="@SharedJsConstants.PrecinctChartId" class="chart-flex-container">
-                        @foreach (var borough in selectedBoroughs)
-                        {
-                            <div id="@(string.Join("-", SharedJsConstants.PrecinctChartId, borough.ToKebabCase()))" class="chart-flex-item"></div>
-                        }
-                    </div>
-                }
-
                 <h3>@Resources.title_borough_requests_table</h3>
-                <div class="table-flex-container">
-                    <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
+
+                <div class="report-container">
+                    <div id="@SharedJsConstants.BoroughChartId" class="apex-chart-container"></div>
+                    <div class="table-flex-container">
+                        <SortableTable Items="requestsByBoroughDate" Options=@boroughDateOptions />
+                    </div>
                 </div>
 
                 @if (ShowZipChart)
                 {
                     <h3>@Resources.title_zip_requests_table</h3>
-                    <div class="table-flex-container">
-                        <SortableTable Items="requestsByZipHour" Options=@zipHourOptions />
+                    <div class="report-container">
+                        <div id="@SharedJsConstants.ZipChartId" class="apex-chart-container"></div>
+
+                        <div class="table-flex-container">
+                            <SortableTable Items="requestsByZipHour" Options=@zipHourOptions />
+                        </div>
                     </div>
                 }
 
                 @if (ShowPrecinctChart)
                 {
                     <h3>@Resources.title_precinct_requests_table</h3>
-                    <div class="table-flex-container">
-                        <SortableTable Items="requestsByPrecinct" Options=@precinctOptions />
+
+                    <div class="report-container">
+                        <div id="@SharedJsConstants.PrecinctChartId" class="chart-flex-container">
+                            @foreach (var borough in selectedBoroughs)
+                            {
+                                <div id="@(string.Join("-", SharedJsConstants.PrecinctChartId, borough.ToKebabCase()))" class="chart-flex-item"></div>
+                            }
+                        </div>
+
+                        <div class="table-flex-container">
+                            <SortableTable Items="requestsByPrecinct" Options=@precinctOptions />
+                        </div>
                     </div>
                 }
             }
