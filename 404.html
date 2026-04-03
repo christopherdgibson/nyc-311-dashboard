@@ -1,0 +1,11 @@
+﻿<!-- 404.html -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+        // Redirect to index with the path preserved
+        sessionStorage.setItem('redirect', location.pathname);
+        location.replace('/nyc-311-dashboard/');
+        </script>
+    </head>
+</html>
